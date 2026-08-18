@@ -3,74 +3,71 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Portfolio — Sign in</title>
-<meta name="color-scheme" content="dark" />
+<title>Quanta — Sign in</title>
+<meta name="color-scheme" content="dark light" />
 <style>
   :root{
-    --bg:#070b15;--card:#0f1a33;--border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
-    --text:#eef2ff;--muted:#8ea0c8;--muted2:#6b7aa5;--accent:#3b82f6;--accent2:#5b8def;
-    --red:#ef4444;--green:#22c55e;--radius:20px;--shadow:0 20px 60px rgba(0,0,0,0.55);
+    --bg:#070708;--card:#141414;--card2:#1e1e1e;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#f0f1f3;--muted:#9aa0b2;--muted2:#767c8f;--accent:#111111;--accentText:#ffffff;
+    --red:#e5484d;--green:#1db469;--radius:18px;--shadow:0 16px 40px rgba(0,0,0,0.45);
     --sans:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
     --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;background:radial-gradient(900px 600px at 50% -10%, rgba(59,130,246,0.18), transparent 70%), var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
-  .page{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
-  .shell{width:100%;max-width:420px}
-  .brand{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:18px;text-align:center}
-  .logo{width:46px;height:46px;border-radius:14px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-weight:800;font-size:14px}
-  .brand h1{margin:0;font-size:17px;font-weight:850;letter-spacing:-0.02em}
+  html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .page{min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:radial-gradient(700px 500px at 50% 0%, rgba(255,255,255,0.04), transparent 70%), var(--bg)}
+  .shell{width:100%;max-width:400px}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:9px;margin-bottom:18px;text-align:center}
+  .logo{width:44px;height:44px;border-radius:12px;background:#fff;color:#000;display:grid;place-items:center;font-weight:800;font-size:16px;letter-spacing:-0.03em}
+  .brand h1{margin:0;font-size:18px;font-weight:800;letter-spacing:-0.02em}
   .brand p{margin:0;color:var(--muted);font-size:12px}
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-  .card-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-  .card-head h2{margin:0;font-size:13px;font-weight:800;letter-spacing:-0.02em}
-  .step-dots{display:flex;gap:6px}
-  .step-dots i{width:20px;height:4px;border-radius:999px;background:rgba(255,255,255,0.12);display:block}
-  .step-dots i.on{background:var(--accent)}
-  .card-body{padding:20px 22px 18px}
-  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-  .label{font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
-  .input{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,0.28);color:var(--text);font-size:14px;outline:none;transition:border .15s, box-shadow .15s}
-  .input:focus{border-color:rgba(59,130,246,0.55);box-shadow:0 0 0 4px rgba(59,130,246,0.14)}
-  .input.mono{font-family:var(--mono)}
+  .card-head{padding:16px 20px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .card-head h2{margin:0;font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted)}
+  .step-dots{display:flex;gap:5px}
+  .step-dots i{width:18px;height:3px;border-radius:999px;background:rgba(255,255,255,0.14);display:block}
+  .step-dots i.on{background:var(--text)}
+  .card-body{padding:18px 20px 16px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
+  .label{font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .input{width:100%;padding:11px 12px;border-radius:11px;border:1px solid var(--border);background:#0f0f0f;color:var(--text);font-size:13.5px;outline:none;transition:border .15s}
+  .input:focus{border-color:rgba(255,255,255,0.18)}
+  .input.mono{font-family:var(--mono);font-size:13px}
   .row{display:flex;gap:10px}
   .row .field{flex:1}
-  .hint{font-size:11.5px;color:var(--muted);line-height:1.4}
-  .hint a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
-  .btn{appearance:none;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text);padding:11px 14px;border-radius:999px;font-size:13px;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;width:100%}
-  .btn:hover{background:rgba(255,255,255,0.10);border-color:var(--border2)}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 10px 22px rgba(59,130,246,0.32)}
-  .btn.primary:hover{background:#2563eb}
+  .hint{font-size:11px;color:var(--muted);line-height:1.4}
+  .btn{appearance:none;border:1px solid var(--border);background:#1a1a1a;color:var(--text);padding:11px 14px;border-radius:999px;font-size:13px;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .14s;width:100%}
+  .btn:hover{background:#222}
+  .btn.primary{background:#fff;color:#000;border-color:#fff}
+  .btn.primary:hover{background:#f0f0f0}
   .btn.ghost{background:transparent}
-  .btn.small{padding:8px 12px;font-size:12px;width:auto}
-  .error,.success{padding:10px 12px;border-radius:12px;font-size:12.5px;display:none;line-height:1.45}
-  .error{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fecaca}
-  .success{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#86efac}
+  .btn.small{padding:7px 11px;font-size:11.5px;width:auto;border-radius:999px}
+  .error,.success{padding:9px 11px;border-radius:10px;font-size:12px;display:none;line-height:1.45}
+  .error{background:rgba(229,72,77,0.10);border:1px solid rgba(229,72,77,0.22);color:#ffb4b6}
+  .success{background:rgba(29,180,105,0.10);border:1px solid rgba(29,180,105,0.22);color:#86efac}
   .error.show,.success.show{display:block}
-  .sub-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
-  .link{font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0}
+  .sub-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px}
+  .link{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0}
   .link:hover{color:var(--text);text-decoration:underline}
-  .sep{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--muted2);font-size:11px}
-  .sep::before,.sep::after{content:"";height:1px;flex:1;background:var(--border)}
-  .mono{font-family:var(--mono)}
-  .foot{margin-top:14px;text-align:center;color:var(--muted2);font-size:11px}
+  .foot{margin-top:14px;text-align:center;color:var(--muted2);font-size:10.5px}
   #app-host{display:none}
   #app-host.show{display:block}
   .hidden{display:none !important}
   #toast-wrap{position:fixed;right:14px;bottom:14px;z-index:90;display:flex;flex-direction:column;gap:8px}
-  .toast{padding:12px 14px;border-radius:12px;background:#0f172a;color:#fff;border:1px solid rgba(255,255,255,0.12);box-shadow:var(--shadow);font-size:13px;max-width:340px}
+  .toast{padding:11px 13px;border-radius:10px;background:#1a1a1a;color:#fff;border:1px solid var(--border);box-shadow:var(--shadow);font-size:12.5px;max-width:340px}
   details{margin-top:10px}
-  details summary{font-size:11.5px;color:var(--muted);cursor:pointer;list-style:none}
+  details summary{font-size:11px;color:var(--muted);cursor:pointer;list-style:none}
   details summary::-webkit-details-marker{display:none}
   details summary span{border-bottom:1px dotted var(--muted)}
+  .icon{width:14px;height:14px;flex:0 0 auto;stroke-width:1.9}
 </style>
 </head>
 <body>
 <div class="page">
   <div class="shell" id="lock-wrap">
     <div class="brand">
-      <div class="logo">◈</div>
-      <h1>Portfolio</h1>
+      <div class="logo">Q</div>
+      <h1>Quanta</h1>
       <p>Sign in to continue</p>
     </div>
 
@@ -80,7 +77,6 @@
         <div class="step-dots" aria-hidden="true"><i id="dot1" class="on"></i><i id="dot2"></i></div>
       </div>
       <div class="card-body">
-        <!-- PIN -->
         <div id="stage-pin">
           <div class="field">
             <label class="label" for="pin-input">PIN</label>
@@ -101,7 +97,6 @@
           <div class="hidden"><div id="pin-setup-hint"></div><div id="pin-unlock-hint"></div><div id="pin-hint"></div><div id="prog" style="display:none"></div></div>
         </div>
 
-        <!-- GitHub -->
         <div id="stage-github" class="hidden">
           <div class="row">
             <div class="field">
@@ -110,13 +105,13 @@
             </div>
             <div class="field">
               <label class="label" for="gh-repo">Private repo</label>
-              <input id="gh-repo" class="input" type="text" autocomplete="off" placeholder="portfolio-private" spellcheck="false" />
+              <input id="gh-repo" class="input" type="text" autocomplete="off" placeholder="quanta-data-pvt" spellcheck="false" />
             </div>
           </div>
           <div class="field">
             <label class="label" for="gh-token">Personal access token</label>
             <input id="gh-token" class="input mono" type="password" autocomplete="off" placeholder="github_pat_…" spellcheck="false" />
-            <div class="hint">Fine-grained, scoped to this repo only · Contents: Read & write · 90-day expiry.</div>
+            <div class="hint">Fine-grained · scoped to this repo only · Contents: Read & write · 90d expiry</div>
           </div>
           <details>
             <summary><span>Advanced (branch / path)</span></summary>
@@ -128,24 +123,21 @@
           <div id="gh-error" class="error" style="margin-top:10px"></div>
           <div id="gh-success" class="success" style="margin-top:10px"></div>
           <button id="btn-gh" class="btn primary" style="margin-top:12px">Sign in</button>
-          <div class="sep">or</div>
-          <button id="btn-gh-demo" class="btn ghost" type="button">Use demo mode</button>
-          <div class="sub-actions" style="justify-content:center">
+          <div class="sub-actions" style="justify-content:center;margin-top:10px">
             <button id="btn-back-pin" class="link" type="button">← Back</button>
           </div>
         </div>
 
-        <!-- Loading -->
         <div id="stage-loading" class="hidden" style="text-align:center;padding:16px 0">
-          <div style="font-size:22px;margin-bottom:8px">⟳</div>
-          <div style="font-weight:750;font-size:13px">Signing in…</div>
+          <div style="font-size:20px;margin-bottom:8px">⟳</div>
+          <div style="font-weight:650;font-size:13px">Signing in…</div>
           <div class="hint" style="margin-top:4px" id="loading-hint">Verifying with GitHub</div>
-          <div style="height:3px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;margin:12px auto 0;max-width:180px"><i id="prog-load" style="display:block;height:100%;width:70%;background:var(--accent);border-radius:999px"></i></div>
+          <div style="height:3px;background:rgba(255,255,255,0.10);border-radius:999px;overflow:hidden;margin:12px auto 0;max-width:180px"><i id="prog-load" style="display:block;height:100%;width:70%;background:#fff;border-radius:999px"></i></div>
         </div>
       </div>
     </div>
 
-    <div class="foot">No data is stored in the public site · Token stays in memory only</div>
+    <div class="foot">Token stays in memory only · No data in public site</div>
   </div>
 </div>
 
@@ -190,8 +182,6 @@
     if(btn) btn.textContent = has ? "Continue" : "Set PIN & continue";
     const confirmField=$("pin-confirm-field");
     if(confirmField) confirmField.classList.toggle("hidden", has);
-    const label=$("pin-state-label");
-    if(label) label.textContent = "";
     setProgress(33);
   }
   async function handlePin(){
@@ -240,12 +230,6 @@
     const branch = $("gh-branch").value.trim() || "main";
     const path = $("gh-path").value.trim() || "data.json";
     if (!username || !repo || !token) { show(errGh, "Username, repo and token are required."); return; }
-    if (token === "demo"){
-      SESSION.username = username || "demo"; SESSION.repo = repo || "demo"; SESSION.token = "demo"; SESSION.branch = branch; SESSION.path = path;
-      show(okGh, "Demo mode — loading local data.");
-      setTimeout(()=> loadApp(), 300);
-      return;
-    }
     SESSION.username = username; SESSION.repo = repo; SESSION.token = token; SESSION.branch = branch; SESSION.path = path;
     $("stage-github").classList.add("hidden");
     $("stage-loading").classList.remove("hidden");
@@ -272,40 +256,25 @@
     }
   }
   async function loadApp(){
-    const isDemo = SESSION.token === "demo";
     const t=$("auth-title"); if(t) t.textContent="Loading…";
     try {
-      if (!isDemo && SESSION.token){
-        const base = `https://api.github.com/repos/${encodeURIComponent(SESSION.username)}/${encodeURIComponent(SESSION.repo)}/contents`;
-        const headers = { "Authorization": `token ${SESSION.token}`, "Accept": "application/vnd.github.v3+json" };
-        const fetchFile = async (name) => {
-          const r = await fetch(`${base}/${encodeURIComponent(name)}?ref=${encodeURIComponent(SESSION.branch)}`, { headers, cache:"no-store" });
-          if (!r.ok) throw new Error(`Missing ${name}`);
-          const j = await r.json();
-          const b64 = j.content.replace(/\n/g,"");
-          const bin = atob(b64);
-          const bytes = Uint8Array.from(bin, c=>c.charCodeAt(0));
-          return new TextDecoder().decode(bytes);
-        };
-        const [css, js] = await Promise.all([fetchFile("style.css"), fetchFile("app.js")]);
-        injectApp(css, js);
-      } else {
-        let css = null, js = null;
-        const tryFetch = async (paths) => {
-          for (const p of paths){
-            try{ const r=await fetch(p,{cache:"no-store"}); if(r.ok) return await r.text(); }catch{}
-          }
-          return null;
-        };
-        css = await tryFetch(["./private/style.css","/private/style.css","../private/style.css"]);
-        js  = await tryFetch(["./private/app.js","/private/app.js","../private/app.js"]);
-        if (!css || !js) throw new Error("Private files not found.");
-        injectApp(css, js);
-      }
+      const base = `https://api.github.com/repos/${encodeURIComponent(SESSION.username)}/${encodeURIComponent(SESSION.repo)}/contents`;
+      const headers = { "Authorization": `token ${SESSION.token}`, "Accept": "application/vnd.github.v3+json" };
+      const fetchFile = async (name) => {
+        const r = await fetch(`${base}/${encodeURIComponent(name)}?ref=${encodeURIComponent(SESSION.branch)}`, { headers, cache:"no-store" });
+        if (!r.ok) throw new Error(`Missing ${name}`);
+        const j = await r.json();
+        const b64 = j.content.replace(/\n/g,"");
+        const bin = atob(b64);
+        const bytes = Uint8Array.from(bin, c=>c.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      };
+      const [css, js] = await Promise.all([fetchFile("style.css"), fetchFile("app.js")]);
+      injectApp(css, js);
     } catch(e){
       $("stage-loading").classList.add("hidden");
       $("stage-github").classList.remove("hidden");
-      show(errGh, e.message || "Failed to load app. Use token 'demo' for preview.");
+      show(errGh, e.message || "Failed to load app.");
     }
   }
   function injectApp(css, js){
@@ -320,73 +289,81 @@
     const host = $("app-host");
     host.classList.add("show");
     host.innerHTML = `
-      <div class="app-shell" style="max-width:1180px;margin:0 auto;padding:18px 16px 40px">
-        <div class="topbar" style="position:sticky;top:12px;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)">
-          <div style="display:flex;align-items:center;gap:12px">
-            <div style="width:34px;height:34px;border-radius:9px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-weight:800;font-size:13px">Q</div>
+      <div class="app-shell" style="max-width:1120px;margin:0 auto;padding:16px 16px 40px">
+        <div class="topbar" style="position:sticky;top:10px;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:8px;background:#fff;color:#000;display:grid;place-items:center;font-weight:800;font-size:13px">Q</div>
             <div>
-              <div style="font-weight:750;letter-spacing:-0.02em;font-size:15px">quanta</div>
-              <div style="font-size:11px;color:var(--muted);letter-spacing:0.02em">personal portfolio advisor</div>
+              <div style="font-weight:700;letter-spacing:-0.02em;font-size:15px">Quanta</div>
+              <div style="font-size:11px;color:var(--muted)">personal portfolio advisor</div>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <button id="btn-theme" class="btn small" style="width:auto;padding:6px 10px;border-radius:999px;font-size:11.5px" title="Toggle theme">Theme</button>
-            <button id="btn-logout" class="btn small" style="width:auto;padding:6px 10px;border-radius:999px;font-size:11.5px">Log out</button>
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <button id="btn-theme" class="btn small" style="width:auto;padding:6px 10px;border-radius:999px;font-size:11px" title="Toggle theme">Theme</button>
+            <button id="btn-logout" class="btn small" style="width:auto;padding:6px 10px;border-radius:999px;font-size:11px">Log out</button>
           </div>
         </div>
-        <div class="tabs" style="display:flex;gap:8px;margin:18px 0 14px;overflow:auto;padding-bottom:2px">
-          <button data-tab="holdings" class="tab-btn active" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--border);background:var(--text);color:var(--bg);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">Holdings <span class="count" id="tab-count-hold" style="font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,0.15)">—</span></button>
-          <button data-tab="recommendations" class="tab-btn" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">Recommendations <span class="count" id="tab-count-rec" style="font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,0.08)">—</span></button>
-          <button data-tab="monitoring" class="tab-btn" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">Monitoring <span class="count" id="tab-count-mon" style="font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,0.08)">—</span></button>
+        <div class="tabs" style="display:flex;gap:6px;margin:14px 0 12px;overflow:auto;padding-bottom:2px">
+          <button data-tab="holdings" class="tab-btn active" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:var(--text);color:var(--bg);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M7 8V6a5 5 0 0 1 10 0v2"/><path d="M12 12v3"/></svg>
+            Holdings <span class="count" id="tab-count-hold" style="font-size:10.5px;padding:1px 6px;border-radius:999px;background:rgba(255,255,255,0.18)">—</span>
+          </button>
+          <button data-tab="recommendations" class="tab-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l1.8 5.4H19l-4.4 3.2 1.7 5.4L12 14.3 7.7 17l1.7-5.4L5 8.4h5.2z"/></svg>
+            Recommendations <span class="count" id="tab-count-rec" style="font-size:10.5px;padding:1px 6px;border-radius:999px;background:rgba(0,0,0,0.07)">—</span>
+          </button>
+          <button data-tab="monitoring" class="tab-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12h5l2-5 4 10 2-5h5"/><circle cx="12" cy="12" r="9" stroke-opacity="0.0"/></svg>
+            Monitoring <span class="count" id="tab-count-mon" style="font-size:10.5px;padding:1px 6px;border-radius:999px;background:rgba(0,0,0,0.07)">—</span>
+          </button>
         </div>
-        <div id="stats-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px"></div>
+        <div id="stats-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px"></div>
         <div id="panel-holdings" class="tab-panel">
-          <div class="toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-            <div class="search" style="position:relative;flex:1;min-width:220px">
-              
-              <input id="global-search" class="input" placeholder="Search holdings, funds, benchmark…" style="padding-left:34px" />
+          <div class="toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <div class="search" style="position:relative;flex:1;min-width:200px">
+              <input id="global-search" class="input" placeholder="Search holdings…" style="padding:9px 11px" />
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button id="btn-add-stock" class="btn small primary" style="width:auto;padding:8px 12px;border-radius:999px;background:#3b82f6;color:#fff;font-size:12px">+ Add Stock</button>
-              <button id="btn-add-fund" class="btn small" style="width:auto;padding:8px 12px;border-radius:999px">+ Add Fund</button>
-              <button id="btn-export" class="btn small ghost" style="width:auto;padding:8px 12px;border-radius:999px">⬇ Export</button>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <button id="btn-add-stock" class="btn small primary" style="width:auto;padding:7px 11px;border-radius:999px;background:var(--text);color:var(--bg);font-size:11.5px">Add stock</button>
+              <button id="btn-add-fund" class="btn small" style="width:auto;padding:7px 11px;border-radius:999px">Add fund</button>
+              <button id="btn-export" class="btn small ghost" style="width:auto;padding:7px 11px;border-radius:999px">Export</button>
             </div>
           </div>
-          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
-            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Stocks — 14 positions</h2><span class="pill" id="stocks-count" style="font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--border)">—</span></div>
-            <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:12px;margin:12px">
-              <table style="width:100%;border-collapse:collapse;font-size:13px">
-                <thead><tr><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Symbol</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Qty</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Avg Price</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Invested</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">LTP / Value</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">P&L</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Badge</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Actions</th></tr></thead>
+          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Stocks</h2><span class="pill" id="stocks-count" style="font-size:10.5px;padding:3px 7px;border-radius:999px;border:1px solid var(--border)">—</span></div>
+            <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:10px;margin:10px">
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                <thead><tr><th>Symbol</th><th>Qty</th><th>Avg</th><th>Invested</th><th>LTP</th><th>P&L</th><th>Badge</th><th></th></tr></thead>
                 <tbody id="stocks-tbody"></tbody>
               </table>
             </div>
           </div>
-          <div class="card" style="margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
-            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Mutual Funds — 13 entries</h2><span class="pill" id="funds-count">—</span></div>
-            <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:12px;margin:12px">
-              <table style="width:100%;border-collapse:collapse;font-size:13px">
-                <thead><tr><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Fund Name</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Type</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Amount</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Badge</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">6Mo</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">1Y</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Actions</th></tr></thead>
+          <div class="card" style="margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Mutual funds</h2><span class="pill" id="funds-count">—</span></div>
+            <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:10px;margin:10px">
+              <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+                <thead><tr><th>Fund</th><th>Type</th><th>Amount</th><th>Badge</th><th>6M</th><th>1Y</th><th></th></tr></thead>
                 <tbody id="funds-tbody"></tbody>
               </table>
             </div>
           </div>
         </div>
         <div id="panel-recommendations" class="tab-panel hidden">
-          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
-            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Ranked ideas</h2><button id="btn-run-recs" class="btn small primary" style="width:auto">⟳ Re-analyze</button></div>
-            <div class="card-body" style="padding:14px 16px"><div class="hint" id="rec-meta" style="margin-bottom:10px"></div><div id="rec-flag-strip" style="margin-bottom:12px"></div><div id="rec-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div></div>
+          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Ranked ideas</h2><button id="btn-run-recs" class="btn small primary" style="width:auto">Re-analyze</button></div>
+            <div class="card-body" style="padding:12px 14px"><div class="hint" id="rec-meta" style="margin-bottom:10px"></div><div id="rec-flag-strip" style="margin-bottom:10px"></div><div id="rec-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div></div>
           </div>
         </div>
         <div id="panel-monitoring" class="tab-panel hidden">
-          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
-            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Monitoring</h2><button id="btn-recheck" class="btn small" style="width:auto">⟳ Re-check now</button></div>
-            <div class="card-body" style="padding:14px 16px"><div id="monitor-toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px"></div><div id="monitor-list"></div></div>
+          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Monitoring</h2><button id="btn-recheck" class="btn small" style="width:auto" type="button">Re-check now</button></div>
+            <div class="card-body" style="padding:12px 14px"><div id="monitor-toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px"></div><div id="monitor-list"></div></div>
           </div>
         </div>
         <div id="app-root" style="display:none"></div>
       </div>
-      <div id="stock-modal" class="modal hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:16px"><div style="width:min(720px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)"><div style="padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><h3 id="stock-modal-title" style="margin:0;font-weight:900">Add Stock</h3><button data-close-modal class="btn small ghost" style="width:auto">✕</button></div><div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label class="label">Symbol *</label><input id="f-stock-symbol" class="input mono" placeholder="e.g., TCS" /></div><div class="field"><label class="label">Company</label><input id="f-stock-company" class="input" placeholder="Company name" /></div><div class="field"><label class="label">Qty</label><input id="f-stock-qty" class="input mono" type="number" step="any" placeholder="10" /></div><div class="field"><label class="label">Avg Price (₹)</label><input id="f-stock-avg" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Invested (₹)</label><input id="f-stock-invested" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">LTP (₹)</label><input id="f-stock-ltp" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Sector</label><input id="f-stock-sector" class="input" placeholder="e.g., IT" /></div><div class="field"><label class="label">Benchmark</label><input id="f-stock-bench" class="input" placeholder="e.g., Nifty IT" /></div><div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div><div style="grid-column:1/-1;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Performance vs Benchmark (%)</div><div class="field"><label class="label">Holding 6Mo</label><input id="f-stock-6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 6Mo</label><input id="f-stock-b6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 1Y</label><input id="f-stock-1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 1Y</label><input id="f-stock-b1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 3Y</label><input id="f-stock-3yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 3Y</label><input id="f-stock-b3yr" class="input mono" type="number" step="any" /></div></div><div style="padding:14px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)"><button data-close-modal class="btn small ghost" style="width:auto">Cancel</button><button id="btn-stock-save" class="btn small primary" style="width:auto">Save</button></div></div></div>
-      <div id="fund-modal" class="modal hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:16px"><div style="width:min(720px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)"><div style="padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><h3 id="fund-modal-title" style="margin:0;font-weight:900">Add Fund</h3><button data-close-modal class="btn small ghost" style="width:auto">✕</button></div><div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field" style="grid-column:1/-1"><label class="label">Fund Name *</label><input id="f-fund-name" class="input" placeholder="Fund name" /></div><div class="field"><label class="label">Type</label><select id="f-fund-type" class="input"><option value="SIP">SIP</option><option value="Lumpsum">Lumpsum</option></select></div><div class="field"><label class="label">Amount (₹)</label><input id="f-fund-amount" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Category</label><input id="f-fund-cat" class="input" placeholder="e.g., Flexi Cap" /></div><div class="field"><label class="label">Benchmark</label><input id="f-fund-bench" class="input" placeholder="e.g., Nifty 500 TRI" /></div><div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div><div style="grid-column:1/-1;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Performance vs Benchmark (%)</div><div class="field"><label class="label">Holding 6Mo</label><input id="f-fund-6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 6Mo</label><input id="f-fund-b6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 1Y</label><input id="f-fund-1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 1Y</label><input id="f-fund-b1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 3Y</label><input id="f-fund-3yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 3Y</label><input id="f-fund-b3yr" class="input mono" type="number" step="any" /></div></div><div style="padding:14px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)"><button data-close-modal class="btn small ghost" style="width:auto">Cancel</button><button id="btn-fund-save" class="btn small primary" style="width:auto">Save</button></div></div></div>
+      <div id="stock-modal" class="modal hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:60;padding:16px"><div style="width:min(720px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:14px"><div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><h3 id="stock-modal-title" style="margin:0;font-weight:700;font-size:14px">Add Stock</h3><button data-close-modal class="btn small ghost" style="width:auto">Close</button></div><div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field"><label class="label">Symbol *</label><input id="f-stock-symbol" class="input mono" placeholder="e.g., TCS" /></div><div class="field"><label class="label">Company</label><input id="f-stock-company" class="input" placeholder="Company name" /></div><div class="field"><label class="label">Qty</label><input id="f-stock-qty" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Avg Price</label><input id="f-stock-avg" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Invested</label><input id="f-stock-invested" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">LTP</label><input id="f-stock-ltp" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Sector</label><input id="f-stock-sector" class="input" placeholder="e.g., IT" /></div><div class="field"><label class="label">Benchmark</label><input id="f-stock-bench" class="input" placeholder="e.g., Nifty IT" /></div><div style="grid-column:1/-1;height:1px;background:var(--border);margin:2px 0"></div><div style="grid-column:1/-1;font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Performance vs Benchmark (%)</div><div class="field"><label class="label">Holding 6M</label><input id="f-stock-6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 6M</label><input id="f-stock-b6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 1Y</label><input id="f-stock-1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 1Y</label><input id="f-stock-b1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 3Y</label><input id="f-stock-3yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 3Y</label><input id="f-stock-b3yr" class="input mono" type="number" step="any" /></div></div><div style="padding:12px 14px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)"><button data-close-modal class="btn small ghost" style="width:auto">Cancel</button><button id="btn-stock-save" class="btn small primary" style="width:auto">Save</button></div></div></div>
+      <div id="fund-modal" class="modal hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:60;padding:16px"><div style="width:min(720px,100%);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:14px"><div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><h3 id="fund-modal-title" style="margin:0;font-weight:700;font-size:14px">Add Fund</h3><button data-close-modal class="btn small ghost" style="width:auto">Close</button></div><div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="field" style="grid-column:1/-1"><label class="label">Fund Name *</label><input id="f-fund-name" class="input" placeholder="Fund name" /></div><div class="field"><label class="label">Type</label><select id="f-fund-type" class="input"><option value="SIP">SIP</option><option value="Lumpsum">Lumpsum</option></select></div><div class="field"><label class="label">Amount</label><input id="f-fund-amount" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Category</label><input id="f-fund-cat" class="input" placeholder="e.g., Flexi Cap" /></div><div class="field"><label class="label">Benchmark</label><input id="f-fund-bench" class="input" placeholder="e.g., Nifty 500 TRI" /></div><div style="grid-column:1/-1;height:1px;background:var(--border);margin:2px 0"></div><div style="grid-column:1/-1;font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Performance vs Benchmark (%)</div><div class="field"><label class="label">Holding 6M</label><input id="f-fund-6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 6M</label><input id="f-fund-b6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 1Y</label><input id="f-fund-1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 1Y</label><input id="f-fund-b1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 3Y</label><input id="f-fund-3yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 3Y</label><input id="f-fund-b3yr" class="input mono" type="number" step="any" /></div></div><div style="padding:12px 14px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)"><button data-close-modal class="btn small ghost" style="width:auto">Cancel</button><button id="btn-fund-save" class="btn small primary" style="width:auto">Save</button></div></div></div>
       <div id="toast-wrap"></div>
     `;
     if (!document.getElementById("app-root")){
@@ -431,24 +408,12 @@
     }
   });
   $("btn-gh").addEventListener("click", verifyAndLoad);
-  $("btn-gh-demo").addEventListener("click", ()=>{
-    $("gh-user").value = $("gh-user").value || "demo-user";
-    $("gh-repo").value = $("gh-repo").value || "portfolio-private";
-    $("gh-token").value = "demo";
-    verifyAndLoad();
-  });
   $("btn-back-pin").addEventListener("click", goPin);
   ["gh-user","gh-repo","gh-token","gh-branch","gh-path"].forEach(id=>{
     const el=$(id); if(el) el.addEventListener("keydown", e=>{ if(e.key==="Enter") verifyAndLoad(); });
   });
   refreshPinUI();
-  if (new URLSearchParams(location.search).get("demo")==="1"){
-    setTimeout(()=>{
-      $("pin-input").value="1234"; $("pin-confirm").value="1234";
-      handlePin().then(()=> setTimeout(()=> { $("gh-token").value="demo"; verifyAndLoad(); }, 600));
-    }, 300);
-  }
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2cfbd0e3a4041ea',t:'MTc4NzA0MzczNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2cfd642ee63b081',t:'MTc4NzA0NDc2Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
