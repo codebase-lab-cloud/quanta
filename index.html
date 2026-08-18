@@ -329,17 +329,26 @@
               <button id="btn-export" class="btn small ghost" style="width:auto;padding:7px 11px;border-radius:999px">Export</button>
             </div>
           </div>
-          <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Stocks</h2><span class="pill" id="stocks-count" style="font-size:10.5px;padding:3px 7px;border-radius:999px;border:1px solid var(--border)">—</span></div>
+          <div class="card" id="hold-stocks-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);cursor:pointer" onclick="const b=document.getElementById('stocks-section-body');b.classList.toggle('hidden');this.querySelector('.chev').textContent=b.classList.contains('hidden')?'▸':'▾'">
+              <div style="display:flex;align-items:center;gap:10px"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Stocks</h2><span class="pill" id="stocks-count" style="font-size:10.5px;padding:3px 7px;border-radius:999px;border:1px solid var(--border)">—</span></div>
+              <div style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px"><span class="chev" style="font-size:12px;transition:transform .15s">▾</span> <span>collapse</span></div>
+            </div>
+            <div id="stocks-section-body">
             <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:10px;margin:10px">
               <table style="width:100%;border-collapse:collapse;font-size:12.5px">
                 <thead><tr><th>Symbol</th><th>Qty</th><th>Avg</th><th>Invested</th><th>LTP</th><th>P&L</th><th>6M vs Bench</th><th>1Y vs Bench</th><th>Badge</th><th></th></tr></thead>
                 <tbody id="stocks-tbody"></tbody>
               </table>
             </div>
+            </div>
           </div>
-          <div class="card" style="margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Mutual funds</h2><span class="pill" id="funds-count">—</span></div>
+          <div class="card" id="hold-funds-card" style="margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);cursor:pointer" onclick="const b=document.getElementById('funds-section-body');b.classList.toggle('hidden');this.querySelector('.chev').textContent=b.classList.contains('hidden')?'▸':'▾'">
+              <div style="display:flex;align-items:center;gap:10px"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Mutual funds</h2><span class="pill" id="funds-count" style="font-size:10.5px;padding:3px 7px;border-radius:999px;border:1px solid var(--border)">—</span></div>
+              <div style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px"><span class="chev" style="font-size:12px">▾</span> <span>collapse</span></div>
+            </div>
+            <div id="funds-section-body">
             <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:10px;margin:10px">
               <table style="width:100%;border-collapse:collapse;font-size:12.5px">
                 <thead><tr><th>Fund</th><th>Type</th><th>Amount</th><th>Badge</th><th>6M</th><th>1Y</th><th></th></tr></thead>
@@ -357,7 +366,23 @@
         <div id="panel-monitoring" class="tab-panel hidden">
           <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
             <div class="card-header" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);font-weight:700">Monitoring</h2><button id="btn-recheck" class="btn small" style="width:auto" type="button">Re-check now</button></div>
-            <div class="card-body" style="padding:12px 14px"><div id="monitor-toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px"></div><div id="monitor-list"></div></div>
+            <div class="card-body" style="padding:12px 14px"><div id="monitor-toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px"></div>
+              <div id="monitor-stocks-section" style="margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+                <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);cursor:pointer" onclick="const b=document.getElementById('monitor-stocks-body');b.classList.toggle('hidden');this.querySelector('.chev').textContent=b.classList.contains('hidden')?'▸':'▾'">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted)">Stocks</span> <span class="pill" id="monitor-stocks-count" style="font-size:10px">—</span></div>
+                  <span class="chev" style="font-size:12px;color:var(--muted)">▾</span>
+                </div>
+                <div id="monitor-stocks-body" style="padding:10px"><div id="monitor-stocks-list"></div></div>
+              </div>
+              <div id="monitor-funds-section" style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+                <div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);cursor:pointer" onclick="const b=document.getElementById('monitor-funds-body');b.classList.toggle('hidden');this.querySelector('.chev').textContent=b.classList.contains('hidden')?'▸':'▾'">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted)">Mutual funds</span> <span class="pill" id="monitor-funds-count" style="font-size:10px">—</span></div>
+                  <span class="chev" style="font-size:12px;color:var(--muted)">▾</span>
+                </div>
+                <div id="monitor-funds-body" style="padding:10px"><div id="monitor-funds-list"></div></div>
+              </div>
+              <div id="monitor-list" class="hidden"></div>
+            </div>
           </div>
         </div>
         <div id="app-root" style="display:none"></div>
@@ -415,5 +440,5 @@
   refreshPinUI();
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2d3f056689a2982',t:'MTc4NzA4Nzc3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2d3fef46a5e7e55',t:'MTc4NzA4ODM3Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
