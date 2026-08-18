@@ -1,901 +1,454 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quanta</title>
-
-<!--
-  THIS HTML IS A ZERO-DATA SHELL.
-  Nothing is baked in. No holdings, no amounts, no badges, no PAT,
-  no token, no PIN. Even the GitHub PAT the user pastes is stored ONLY
-  in the user's browser localStorage.
-  Built with security-first defaults: no user data is baked in.
--->
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Portfolio — Sign in</title>
+<meta name="color-scheme" content="dark" />
 <style>
-:root {
-  --bg: #0f1218;
-  --bg-2: #181b23;
-  --bg-3: #232733;
-  --panel: #161922;
-  --panel-2: #1d2030;
-  --panel-3: #252a3d;
-  --border: #2a2f43;
-  --border-2: #353a52;
-  --text: #f4f4f7;
-  --muted: #9aa0b4;
-  --accent: #5b9dff;
-  --accent-2: #7a5cff;
-  --red: #ff6b6b;
-  --yellow: #ffc857;
-  --green: #57d97a;
-  --shadow: 0 10px 30px rgba(0,0,0,.45);
-}
-* { box-sizing: border-box; }
-html, body { margin:0; padding:0; background: var(--bg); color: var(--text);
-  font-family: -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
-  min-height: 100vh; }
-
-.screen { display: none; }
-.screen.active { display: block; }
-
-.topbar {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 24px; background: var(--bg-2); border-bottom: 1px solid var(--border);
-}
-.topbar h1 { font-size: 18px; margin: 0; letter-spacing: -.01em; }
-.topbar-actions { display: flex; gap: 8px; }
-.topbar-actions button {
-  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-  border-radius: 7px; padding: 6px 10px; cursor: pointer; font-size: 13px;
-}
-
-.auth-shell {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: calc(100vh - 60px); padding: 32px 16px;
-}
-.auth-card {
-  width: 100%; max-width: 420px; background: var(--panel);
-  border: 1px solid var(--border); border-radius: 14px;
-  padding: 28px; box-shadow: var(--shadow);
-}
-.auth-card h2 { margin:0 0 8px; font-size: 22px; }
-.auth-card p.muted { color: var(--muted); font-size: 13px; margin: 4px 0 16px; }
-.auth-card label { display:block; font-size: 12px; color: var(--muted); margin: 8px 0 0; }
-.auth-card input, .auth-card textarea {
-  display: block; width: 100%; box-sizing: border-box; margin-top: 4px;
-  background: var(--bg-2); color: var(--text);
-  border: 1px solid var(--border-2); border-radius: 7px;
-  padding: 9px 11px; font-family: inherit; font-size: 14px;
-}
-.auth-card input:focus { outline: none; border-color: var(--accent); }
-.auth-card button { margin-top: 14px; }
-.auth-card .small { padding: 6px 10px; font-size: 12px; }
-.auth-error { color: var(--red); font-size: 13px; min-height: 16px; margin-top: 8px; }
-.auth-options { display: flex; flex-wrap: wrap; gap: 6px; }
-.btn {
-  background: var(--accent); color: white; border: 0; padding: 9px 14px;
-  border-radius: 7px; cursor: pointer; font-weight: 600; font-size: 14px;
-}
-.btn.ghost {
-  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-}
-
-.dash-shell { padding: 18px 24px 32px; }
-.ds-bar {
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: 12px; padding: 10px 14px; display: flex;
-  justify-content: space-between; align-items: center; gap: 6px;
-  flex-wrap: wrap; margin-bottom: 14px;
-}
-.ds-bar .left { display: flex; align-items: center; gap: 10px; }
-.ds-bar .right { display: flex; gap: 6px; flex-wrap: wrap; }
-.ds-bar button {
-  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-  border-radius: 7px; padding: 5px 10px; cursor: pointer; font-size: 12px;
-}
-.dot { display:inline-block; width:10px; height:10px; border-radius:50%;
-  vertical-align: middle; margin-right: 6px; }
-.dot.red { background: var(--red); }
-.dot.yellow { background: var(--yellow); }
-.dot.green { background: var(--green); }
-.dot.gray  { background: var(--muted); }
-.badge { display: inline-flex; align-items: center; padding: 2px 8px;
-  border-radius: 999px; font-size: 11px; font-weight: 600; }
-.badge.red    { background: rgba(255,107,107,.15); color: var(--red); border: 1px solid rgba(255,107,107,.4); }
-.badge.yellow { background: rgba(255,200,87,.15); color: var(--yellow); border: 1px solid rgba(255,200,87,.4); }
-.badge.green  { background: rgba(87,217,122,.15); color: var(--green); border: 1px solid rgba(87,217,122,.4); }
-.badge.gray   { background: var(--panel-2); color: var(--muted); border:1px solid var(--border); }
-
-.tabs { display: flex; gap: 4px; padding: 6px; background: var(--panel-2);
-  border: 1px solid var(--border); border-radius: 9px; width: fit-content; margin-bottom: 14px; }
-.tab { background: 0; color: var(--muted); border: 0; padding: 7px 12px;
-  border-radius: 7px; font-size: 13px; cursor: pointer; }
-.tab.active { background: var(--panel); color: var(--text); }
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-.card { background: var(--panel-2); border: 1px solid var(--border);
-  border-radius: 14px; padding: 14px; margin-top: 10px; }
-.card .badge-slot { position: absolute; }
-.card .title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.card .title-row h4 { font-size: 14px; margin: 0; }
-.card .meta { color: var(--muted); font-size: 11px; margin-top: 4px; }
-.card .reason { margin-top: 8px; font-size: 13px; line-height: 1.4; }
-.card .score-pill { background: var(--panel); border: 1px solid var(--border);
-  border-radius: 999px; padding: 1px 8px; font-size: 10px; color: var(--muted); }
-.card .footer-row { display: flex; justify-content: space-between;
-  padding-top: 8px; margin-top: 8px; border-top: 1px solid var(--border);
-  font-size: 11px; }
-.card .card-type { padding: 1px 6px; border-radius: 4px;
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
-  color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  font-size: 10px; }
-
-.summary-bar {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
-  gap: 10px; padding: 14px; background: var(--panel);
-  border: 1px solid var(--border); border-radius: 12px; margin-bottom: 14px;
-}
-.summary-bar .stat { display: flex; flex-direction: column; gap: 4px; }
-.summary-bar .label { font-size: 10px; text-transform: uppercase;
-  letter-spacing: .07em; color: var(--muted); }
-.summary-bar .value { font-size: 18px; font-weight: 700; }
-.summary-bar .value.warn { color: var(--red); }
-.summary-bar .value.good { color: var(--green); }
-.summary-bar .value.accent { color: var(--accent); }
-
-.pulse-panel { background: var(--panel); border: 1px solid var(--border);
-  border-radius: 12px; padding: 14px; margin-bottom: 14px; }
-.pulse-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.pulse-head-left { display: flex; align-items: center; gap: 8px; }
-.pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
-.pulse-dot.active { background: var(--green); }
-.pulse-body { display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px; margin-top: 10px; }
-.pulse-score { padding: 10px 14px; background: var(--panel-2);
-  border: 1px solid var(--border); border-radius: 10px; text-align: center; }
-.pulse-score-num { font-size: 28px; font-weight: 700; }
-.pulse-bars { padding: 10px 14px; background: var(--panel-2);
-  border: 1px solid var(--border); border-radius: 10px; display: flex;
-  flex-direction: column; gap: 6px; }
-.pulse-bar-row { display: grid; grid-template-columns: 14px 1fr auto;
-  align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-.pulse-meta { padding: 10px 14px; background: var(--panel-2);
-  border: 1px solid var(--border); border-radius: 10px; display: flex;
-  flex-direction: column; gap: 4px; }
-.pulse-meta-item { display: flex; flex-direction: column; }
-.pulse-meta-lbl { font-size: 10px; text-transform: uppercase;
-  letter-spacing: .07em; color: var(--muted); }
-.pulse-meta-val { font-size: 18px; font-weight: 700; }
-.pulse-breakdown { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.pulse-chip { display:inline-flex; align-items:center; gap:6px;
-  background: var(--panel-2); border: 1px solid var(--border);
-  border-radius: 999px; padding: 4px 10px; font-size: 11px;
-}
-.pulse-chip .counts { color: var(--muted); }
-
-.data-table { width: 100%; border-collapse: collapse; background: var(--panel);
-  border: 1px solid var(--border); border-radius: 12px; overflow:hidden; }
-.data-table th, .data-table td {
-  padding: 8px 12px; text-align: left; font-size: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.data-table th { background: var(--panel-2); color: var(--muted); font-size: 10px;
-  text-transform: uppercase; letter-spacing: .07em; }
-.data-table tr:last-child td { border-bottom: 0; }
-.data-table .muted-cell { color: var(--muted); font-size: 11px; line-height: 1.3; }
-.data-table button { padding: 4px 8px; font-size: 11px;
-  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-  border-radius: 6px; cursor: pointer; margin-right: 4px; }
-
-.totals-bar { margin-top: 10px; padding: 12px 14px;
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: 12px; display: flex; flex-wrap: wrap; gap: 14px;
-  font-size: 12px; color: var(--muted); }
-.totals-bar .v { font-size: 14px; color: var(--text); margin-left: 6px; }
-
-.mon-section { background: var(--panel); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
-.mon-section-header { display: flex; justify-content: space-between; align-items: center;
-  font-size: 10px; text-transform: uppercase; letter-spacing: .07em;
-  color: var(--muted); margin-bottom: 8px; }
-.mon-section-header .count { background: var(--panel-2);
-  border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; }
-.mon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
-  gap: 10px; }
-.mon-card { padding: 10px 12px; background: var(--panel-2);
-  border: 1px solid var(--border); border-radius: 10px;
-  border-left: 4px solid var(--muted); }
-.mon-card.red    { border-left-color: var(--red); }
-.mon-card.yellow { border-left-color: var(--yellow); }
-.mon-card.green  { border-left-color: var(--green); }
-.mon-card h4 { margin: 0 0 4px; font-size: 13px; }
-.mon-card .meta { color: var(--muted); font-size: 11px; }
-.mon-card .flagged-since { color: var(--yellow); font-size: 11px; margin-top: 4px; }
-.mon-card .return-row { display: flex; gap: 6px; margin-top: 8px; }
-.mon-card .v { font-size: 11px; }
-.mon-card .return-chip { padding: 3px 6px; background: var(--panel);
-  border: 1px solid var(--border); border-radius: 4px; font-size: 10px; }
-.mon-empty { color: var(--muted); padding: 10px; font-size: 12px; }
-
-.hidden { display: none !important; }
+  :root{
+    --bg:#070b15;--card:#0f1a33;--border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.15);
+    --text:#eef2ff;--muted:#8ea0c8;--muted2:#6b7aa5;--accent:#3b82f6;--accent2:#5b8def;
+    --red:#ef4444;--green:#22c55e;--radius:20px;--shadow:0 20px 60px rgba(0,0,0,0.55);
+    --sans:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:radial-gradient(900px 600px at 50% -10%, rgba(59,130,246,0.18), transparent 70%), var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .page{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+  .shell{width:100%;max-width:420px}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:18px;text-align:center}
+  .logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:grid;place-items:center;font-weight:900;font-size:18px;box-shadow:0 10px 24px rgba(59,130,246,0.35)}
+  .brand h1{margin:0;font-size:17px;font-weight:850;letter-spacing:-0.02em}
+  .brand p{margin:0;color:var(--muted);font-size:12px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card-head{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .card-head h2{margin:0;font-size:13px;font-weight:800;letter-spacing:-0.02em}
+  .step-dots{display:flex;gap:6px}
+  .step-dots i{width:20px;height:4px;border-radius:999px;background:rgba(255,255,255,0.12);display:block}
+  .step-dots i.on{background:var(--accent)}
+  .card-body{padding:20px 22px 18px}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+  .label{font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .input{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,0.28);color:var(--text);font-size:14px;outline:none;transition:border .15s, box-shadow .15s}
+  .input:focus{border-color:rgba(59,130,246,0.55);box-shadow:0 0 0 4px rgba(59,130,246,0.14)}
+  .input.mono{font-family:var(--mono)}
+  .row{display:flex;gap:10px}
+  .row .field{flex:1}
+  .hint{font-size:11.5px;color:var(--muted);line-height:1.4}
+  .hint a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+  .btn{appearance:none;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text);padding:11px 14px;border-radius:999px;font-size:13px;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;width:100%}
+  .btn:hover{background:rgba(255,255,255,0.10);border-color:var(--border2)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 10px 22px rgba(59,130,246,0.32)}
+  .btn.primary:hover{background:#2563eb}
+  .btn.ghost{background:transparent}
+  .btn.small{padding:8px 12px;font-size:12px;width:auto}
+  .error,.success{padding:10px 12px;border-radius:12px;font-size:12.5px;display:none;line-height:1.45}
+  .error{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fecaca}
+  .success{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#86efac}
+  .error.show,.success.show{display:block}
+  .sub-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+  .link{font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0}
+  .link:hover{color:var(--text);text-decoration:underline}
+  .sep{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--muted2);font-size:11px}
+  .sep::before,.sep::after{content:"";height:1px;flex:1;background:var(--border)}
+  .mono{font-family:var(--mono)}
+  .foot{margin-top:14px;text-align:center;color:var(--muted2);font-size:11px}
+  #app-host{display:none}
+  #app-host.show{display:block}
+  .hidden{display:none !important}
+  #toast-wrap{position:fixed;right:14px;bottom:14px;z-index:90;display:flex;flex-direction:column;gap:8px}
+  .toast{padding:12px 14px;border-radius:12px;background:#0f172a;color:#fff;border:1px solid rgba(255,255,255,0.12);box-shadow:var(--shadow);font-size:13px;max-width:340px}
+  details{margin-top:10px}
+  details summary{font-size:11.5px;color:var(--muted);cursor:pointer;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary span{border-bottom:1px dotted var(--muted)}
 </style>
-
-<script>
-// =====================================================================
-//  State machine — PIN gate → GitHub auth → Dashboard
-//  Zero baked data. Zero baked credentials. PAT only in browser localStorage.
-// =====================================================================
-(function(){
-  var PIN_HASH_KEY = "quanta-pin-hash-v1";
-  var PIN_SALT     = "quanta-v1-fixed-salt";
-  var DATA_KEY     = "quanta-data-v1";
-  var CFG_KEY      = "quanta-cfg-v1";
-
-  function $(s,r){return (r||document).querySelector(s);}
-
-  function showOnly(id){
-    ["#screen-pin-setup","#screen-pin","#screen-ghauth","#screen-dash"].forEach(function(s){
-      var e=$(s); if(e) e.classList.add("hidden");
-    });
-    var tgt=$(id); if(tgt) tgt.classList.remove("hidden");
-  }
-  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g, function(c){
-    return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c];
-  });}
-
-  var state = {
-    pinConfigured: false,
-    data: null,
-    cfg: null,
-  };
-
-  function loadPersisted(){
-    try { state.pinConfigured = !!localStorage.getItem(PIN_HASH_KEY); } catch(e){}
-    try { state.cfg  = JSON.parse(localStorage.getItem(CFG_KEY) ||"null"); } catch(e){}
-    try { state.data = JSON.parse(localStorage.getItem(DATA_KEY)||"null"); } catch(e){}
-  }
-
-  // PASSWORD HASHING on the client side only — slow but uses native WebCrypto.
-  // NOTE: This is a sanity-gate, NOT real security. The real security is the
-  // PAT in GH config, which is in this browser's localStorage.
-  async function sha256Hex(str){
-    var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(function(b){return ("0"+b.toString(16)).slice(-2);}).join("");
-  }
-
-  async function setPin(pin){
-    var h = await sha256Hex(PIN_SALT+":"+pin);
-    localStorage.setItem(PIN_HASH_KEY, h);
-    state.pinConfigured = true;
-  }
-  async function checkPin(pin){
-    var h = await sha256Hex(PIN_SALT+":"+pin);
-    return state.pinConfigured && localStorage.getItem(PIN_HASH_KEY) === h;
-  }
-  function clearPin(){ localStorage.removeItem(PIN_HASH_KEY); state.pinConfigured=false; }
-
-  function sha256HexSyncFallback(str){
-    // Sync fallback if WebCrypto unavailable. Note: this is just a UI gate.
-    var h = 0;
-    for (var i=0;i<str.length;i++){ h = ((h<<5) - h) + str.charCodeAt(i); h |= 0; }
-    return ("0000000"+(h>>>0).toString(16)).slice(-8);
-  }
-
-  // ----- PIN flow -----
-  async function onPinSetupSubmit(e){
-    e.preventDefault();
-    var a = ($("#pin-new").value||"");
-    var b = ($("#pin-new-confirm").value||"");
-    $("#pin-setup-error").textContent = "";
-    if (a.length < 4){ $("#pin-setup-error").textContent = "PIN must be at least 4 characters."; return; }
-    if (a !== b)                            { $("#pin-setup-error").textContent = "PINs do not match."; return; }
-    try {
-      await setPin(a);
-      $("#pin-new").value=""; $("#pin-new-confirm").value="";
-      showOnly("screen-pin");
-      $("#pin-input").focus();
-    } catch(e){ $("#pin-setup-error").textContent = "Could not save PIN."; }
-  }
-  async function onPinSubmit(e){
-    e.preventDefault();
-    var pin = ($("#pin-input").value || "");
-    $("#pin-error").textContent = "";
-    if (!pin){ $("#pin-error").textContent = "Enter your PIN."; return; }
-    var ok = false;
-    try { ok = await checkPin(pin); } catch(e) { ok = false; }
-    if (!ok){ $("#pin-error").textContent = "PIN doesn't match."; return; }
-    showOnly("screen-ghauth");
-    initGhAuthScreen();
-  }
-  function onPinSetLinkClick(e){
-    e.preventDefault();
-    showOnly("screen-pin-setup");
-    $("#pin-new").value=""; $("#pin-new-confirm").value="";
-    $("#pin-setup-error").textContent="";
-    setTimeout(function(){ $("#pin-new").focus(); }, 50);
-  }
-  function onPinForgetClick(e){
-    e.preventDefault();
-    if (!confirm("Forget PIN and wipe ALL locally-stored data including any cached PAT?")) return;
-    localStorage.clear();
-    location.reload();
-  }
-
-  // ----- GitHub auth flow -----
-  function initGhAuthScreen(){
-    clearError("gh-error");
-    ["gh-pane-pat","gh-pane-upload","gh-pane-paste"].forEach(function(p){
-      var e=$("#"+p); if(e) e.classList.add("hidden");
-    });
-    if (state.cfg && state.cfg.repo)  $("#gh-repo").value   = state.cfg.repo;
-    if (state.cfg && state.cfg.branch) $("#gh-branch").value = state.cfg.branch;
-    $("#gh-pat").value="";
-    
-    var hasRepo = !!(state.cfg && state.cfg.repo);
-
-    var hasPat  = !!(state.cfg && state.cfg.pat);
-
-    $("#gh-status").textContent = (hasRepo && hasPat)
-
-      ? "PAT is in-memory only (this page only). Repo: "+state.cfg.repo+"@"+(state.cfg.branch||"main")
-
-      : (hasRepo)
-
-        ? "Repo saved. Re-enter your PAT below (PAT never stored for security)."
-
-        : "Choose a method below to load your data.";
-    $("#gh-repo").focus();
-  }
-  function clearError(id){var e=$(id); if(e) e.textContent="";}
-  function onPickPat(){ document.querySelectorAll("#gh-pane-pat,#gh-pane-upload,#gh-pane-paste").forEach(function(x){x.classList.add("hidden");}); $("#gh-pane-pat").classList.remove("hidden"); $("#gh-pat").focus(); }
-  function onPickUpload(){ document.querySelectorAll("#gh-pane-pat,#gh-pane-upload,#gh-pane-paste").forEach(function(x){x.classList.add("hidden");}); $("#gh-pane-upload").classList.remove("hidden"); $("#gh-file").click(); }
-  function onPickPaste(){ document.querySelectorAll("#gh-pane-pat,#gh-pane-upload,#gh-pane-paste").forEach(function(x){x.classList.add("hidden");}); $("#gh-pane-paste").classList.remove("hidden"); $("#gh-textarea").focus(); }
-  function onPickDemo(){
-    state.data = {
-      username:"", holdings:[], funds:[], monitoring:[], recommendations:[],
-      pulse:{total:0, red:0, yellow:0, ok:0, health_score:0,
-             concentration_top3_pct:0, by_sector:[], by_category:[]}
-    };
-    try{localStorage.setItem(DATA_KEY, JSON.stringify(state.data));}catch(e){}
-    showOnly("screen-dash"); refreshSourcePill("Sample board (no data)"); renderAll();
-  }
-
-  async function onGhConnect(){
-    clearError("gh-error");
-    var repo   = ($("#gh-repo").value||"").trim();
-    var branch = ($("#gh-branch").value||"main").trim() || "main";
-    var pat    = ($("#gh-pat").value||""").trim();
-    if (!repo){ $("#gh-error").textContent = "Repo (owner/name) required."; return; }
-    if (!pat){  $("#gh-error").textContent = "Paste a Personal Access Token."; return; }
-    $("#gh-error").textContent = "Verifying token…";
-    var url = "https://raw.githubusercontent.com/"+repo+"/"+branch+"/data.json?_="+Date.now();
-    try {
-      var res = await fetch(url, { headers:{"Authorization":"token "+pat}, cache:"no-store" });
-      if (!res.ok){
-        if (res.status===401) $("#gh-error").textContent="401 — Invalid PAT, or PAT lacks Contents: Read on this repo.";
-        else if (res.status===403) $("#gh-error").textContent="403 — PAT lacks Contents: Read scope, or repo is private.";
-        else if (res.status===404) $("#gh-error").textContent="404 — repo/branch not found.";
-        else $("#gh-error").textContent = "HTTP "+res.status;
-        return;
-      }
-      var d = await res.json();
-      ingest(d);
-      saveConfig({repo:repo, branch:branch, pat:pat});
-      showOnly("screen-dash");
-      refreshSourcePill(repo+"@"+branch+" — live data");
-    } catch(err){
-      $("#gh-error").textContent = "Network error: "+(err&&err.message||err);
-    }
-  }
-  function onGhFile(ev){
-    var f = ev.target.files[0]; if (!f) return;
-    var r = new FileReader();
-    r.onload = function(){
-      try { var d = JSON.parse(r.result); ingest(d); try{saveData();}catch(e){} showOnly("screen-dash"); refreshSourcePill("Loaded from local file: "+f.name); renderAll(); }
-      catch(e){ $("#gh-error").textContent="Invalid JSON: "+e.message; }
-    };
-    r.onerror = function(){ $("#gh-error").textContent = "Failed to read file."; };
-    r.readAsText(f);
-  }
-  function onGhPasteLoad(){
-    clearError("gh-error");
-    try {
-      var raw = $("#gh-textarea").value || "";
-      if (!raw.trim()){ $("#gh-error").textContent = "Paste data.json content first."; return; }
-      var d = JSON.parse(raw);
-      ingest(d);
-      saveData();
-      showOnly("screen-dash");
-      refreshSourcePill("Loaded from pasted JSON");
-      renderAll();
-    } catch(err){ $("#gh-error").textContent = "Invalid JSON: "+(err&&err.message||err); }
-  }
-
-  function saveConfig(c){ try{ localStorage.setItem(CFG_KEY, JSON.stringify({repo:c.repo, branch:c.branch})); }catch(e){} state.cfg = c; }
-  function saveData(){    try{ localStorage.setItem(DATA_KEY, JSON.stringify(state.data||{})); }catch(e){} }
-  function ingest(d){
-    state.data = {
-      username:d && d.username || "",
-      holdings:d && d.holdings || [],
-      funds:d && d.funds || [],
-      monitoring:d && d.monitoring || [],
-      recommendations:d && d.recommendations || [],
-      pulse:d && d.pulse || null,
-    };
-  }
-
-  function refreshSourcePill(text){
-    var p = $("#data-source-pill"); if (p) p.textContent = text;
-    var s = $("#ds-status-text");  if (s) s.textContent = text;
-  }
-
-  // ----- Dashboard render -----
-  function fmtPct(v){return v==null?"—":(v>0?"+":"")+v.toFixed(1);}
-  function fmtCur(v){return v==null?"—":"₹"+Number(v).toLocaleString("en-IN");}
-  function relCls(v){if(v==null)return"";return v<0?"neg":(v>0?"pos":"");}
-  function badgeHtml(s){
-    if(s==="red")return'<span class="badge red"><span class="dot red"></span>RED</span>';
-    if(s==="yellow")return'<span class="badge yellow"><span class="dot yellow"></span>YELLOW</span>';
-    if(s==="green")return'<span class="badge green"><span class="dot green"></span>OK</span>';
-    return'<span class="badge gray"><span class="dot gray"></span>—</span>';
-  }
-  function renderHoldings(){
-    var stBody=$("#stocks-table tbody"); if (stBody){
-      stBody.innerHTML=(state.data.holdings||[]).map(function(s){
-        return '<tr><td><b>'+esc(s.symbol||"—")+'</b></td>'
-          +'<td>'+(s.quantity!=null?s.quantity:"—")+'</td>'
-          +'<td>'+(s.avg_buy_price!=null?fmtCur(s.avg_buy_price):"—")+'</td>'
-          +'<td>'+(s.invested_amount!=null?fmtCur(s.invested_amount):"—")+'</td>'
-          +'<td class="muted-cell">'+esc((s.sector||"—")+"<br>"+(s.benchmark||"—"))+'</td>'
-          +'<td>'+badgeHtml(s.badge)+'</td></tr>';
-      }).join("");
-    }
-    var fuBody = $("#funds-table tbody"); if(fuBody){
-      fuBody.innerHTML = (state.data.funds||[]).map(function(f){
-        var amt = f.fund_type==="SIP" ? f.sip_amount_monthly : f.lumpsum_amount;
-        return '<tr><td><b>'+esc(f.fund_name||"—")+'</b></td>'
-          +'<td>'+esc(f.fund_type)+'</td>'
-          +'<td>'+(amt!=null?fmtCur(amt):"—")+'</td>'
-          +'<td>'+esc(f.frequency||"—")+'</td>'
-          +'<td class="muted-cell">'+esc((f.category||"—")+"<br>"+(f.benchmark||"—"))+'</td>'
-          +'<td>'+badgeHtml(f.badge)+'</td></tr>';
-      }).join("");
-    }
-  }
-  function renderRecommendations(){
-    var byType = {"buy":[],"increase_sip":[],"switch_to":[]};
-    (state.data.recommendations||[]).forEach(function(r){
-      if (byType[r.recommendation_type]) byType[r.recommendation_type].push(r);
-    });
-    function card(r){
-      var color = (r.recommendation_type==="switch_to")?"var(--red)":"var(--accent)";
-      var s="background:color-mix(in srgb,"+color+" 14%,transparent);color:"+color+";border-color:color-mix(in srgb,"+color+" 30%,transparent);";
-      return '<div class="card"><div class="title-row"><h4>'+esc(r.asset_name||"—")+'</h4>'
-        +'<span class="score-pill">score '+Math.round((r.ordering_score||0)*100)+'</span></div>'
-        +'<div class="meta"><span class="card-type" style="'+s+'">'+esc(r.recommendation_type==="buy"?"Buy":(r.recommendation_type==="switch_to"?"Switch to":"Increase SIP"))+'</span></div>'
-        +'<div class="reason">'+esc(r.reason||"")+'</div>'
-        +'<div class="footer-row"><span>Suggested</span><span>'+esc(r.suggested_investment||"—")+'</span></div></div>';
-    }
-    function setGroup(id, items){
-      var g=$("#"+id); if(!g) return;
-      var list=g.querySelector("[data-list]"), cnt=g.querySelector("[data-count]"), empty=g.querySelector("[data-empty]");
-      if(items.length===0){g.classList.add("hidden"); if(empty) empty.classList.remove("hidden"); return;}
-      g.classList.remove("hidden");
-      list.innerHTML=items.map(card).join("");
-      cnt.textContent=items.length+" "+(items.length===1?"item":"items");
-      if(empty) empty.classList.add("hidden");
-    }
-    setGroup("rec-group-switch-to",    byType.switch_to);
-    setGroup("rec-group-buy",          byType.buy);
-    setGroup("rec-group-increase-sip", byType.increase_sip);
-  }
-  function renderMonitoring(){
-    var mon = state.data.monitoring || [];
-    var f=mon.filter(function(m){return m.holding_type==="fund";}).sort(function(a,b){return (a.name||"").localeCompare(b.name||"");});
-    var s=mon.filter(function(m){return m.holding_type==="stock";}).sort(function(a,b){return (a.name||"").localeCompare(b.name||"");});
-    function card(m){
-      var fs = m.flagged_since ? '<div class="flagged-since">Flagged since '+esc(new Date(m.flagged_since).toLocaleDateString())+'</div>' : "";
-      return '<div class="mon-card '+(m.status||"none")+'">'
-        +'<h4>'+esc(m.name||"—")+'</h4>'
-        +'<div class="meta">vs <b>'+esc(m.benchmark||"—")+'</b></div>'
-        +fs
-        +'<div class="return-row">'
-          +'<span class="return-chip">6mo <span class="v '+relCls(m.rel_6)+'">'+fmtPct(m.rel_6)+' pts</span></span>'
-          +'<span class="return-chip">1yr <span class="v '+relCls(m.rel_1)+'">'+fmtPct(m.rel_1)+' pts</span></span>'
-          +'<span class="return-chip">3yr <span class="v '+relCls(m.rel_3)+'">'+fmtPct(m.rel_3)+' pts</span></span>'
-        +'</div>'
-        +'</div>';
-    }
-    var fl=$("#mon-funds-list");  if(fl) fl.innerHTML=f.map(card).join("");
-    var sl=$("#mon-stocks-list"); if(sl) sl.innerHTML=s.map(card).join("");
-    function cnt(sel,n){var e=$(sel); if(e) e.textContent=n+(n===1?" item":" items");}
-    cnt("#mon-funds-count", f.length);
-    cnt("#mon-stocks-count", s.length);
-    var fe=$("#mon-funds-empty");  if(fe) fe.classList.toggle("hidden", f.length>0);
-    var se=$("#mon-stocks-empty"); if(se) se.classList.toggle("hidden", s.length>0);
-  }
-  function renderPulse(){
-    var p=state.data.pulse, h=$(pulse-num);
-    var tot=$("[data-stat='holdings']"); if(tot) tot.textContent=(state.data.holdings||[]).length + (state.data.funds||[]).length;
-    var flagged=(state.data.monitoring||[]).filter(function(m){return m.status==="red"||m.status==="yellow";}).length;
-    var fl=$("[data-stat='flagged']"); if(fl){fl.textContent=flagged; fl.classList.remove("warn","caution","good","accent"); fl.classList.add(flagged>0?"warn":"good");}
-    var rs=$("[data-stat='suggestions']"); if(rs){rs.textContent=(state.data.recommendations||[]).length; rs.classList.remove("warn","caution","good","accent"); rs.classList.add("good");}
-    var stInv=(state.data.holdings||[]).reduce(function(a,s){return a+(s.invested_amount||0);},0);
-    var lump=(state.data.funds||[]).reduce(function(a,f){return a+(f.lumpsum_amount||0);},0);
-    var bp=$("[data-stat='capital']"); if(bp) bp.textContent="₹"+Math.round(stInv+lump).toLocaleString("en-IN");
-    if(h && p && typeof p.health_score==="number"){
-      h.textContent=isFinite(p.health_score)?Math.round(p.health_score):"—";
-      h.classList.remove("warn","caution","good");
-      h.classList.add((p.health_score>=75)?"good":((p.health_score>=50)?"caution":"warn"));
-    } else if(h) h.textContent="—";
-    if($("#pulse-ok"))       $("#pulse-ok").textContent      = (p&&p.ok||0)+" holdings";
-    if($("#pulse-yellow"))  $("#pulse-yellow").textContent  = (p&&p.yellow||0)+" holdings";
-    if($("#pulse-red"))     $("#pulse-red").textContent     = (p&&p.red||0)+" holdings";
-    if($("#pulse-total"))   $("#pulse-total").textContent   = (p&&p.total||0);
-    if($("#pulse-concentration")) $("#pulse-concentration").textContent = (p&&p.concentration_top3_pct||0)+"%";
-    if(p && p.ran_at) $("#pulse-when").textContent = "as of "+String(p.ran_at).slice(0,10);
-    var br=$("#pulse-breakdown"); if(br) br.innerHTML="";
-  }
-  function renderTotals(){
-    var s=(state.data.holdings||[]).reduce(function(a,s){return a+(s.invested_amount||0);},0);
-    var l=(state.data.funds||[]).reduce(function(a,f){return a+(f.lumpsum_amount||0);},0);
-    var sp=(state.data.funds||[]).reduce(function(a,f){return a+(f.sip_amount_monthly||0);},0);
-    var bar=$("#totals-bar"); if(!bar) return;
-    bar.innerHTML =
-      '<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Stocks</span><span class="v">'+fmtCur(s)+'</span></div>'
-      +'<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Funds (lum)</span><span class="v">'+fmtCur(l)+'</span></div>'
-      +'<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Monthly SIP</span><span class="v">'+fmtCur(sp)+'</span></div>'
-      +'<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">Total</span><span class="v">'+(state.data.holdings||[]).length+' s / '+(state.data.funds||[]).length+' f</span></div>';
-  }
-
-  function renderAll(){
-    renderHoldings();
-    renderRecommendations();
-    renderMonitoring();
-    renderPulse();
-    renderTotals();
-    var any = state.data && ((state.data.holdings||[]).length>0 || (state.data.funds||[]).length>0);
-    var eb=$("#ds-btn-export"); if(eb) eb.disabled = !any;
-    var cb=$("#ds-btn-clear");  if(cb) cb.disabled = !any;
-  }
-  function exportJSON(){
-    if(!state.data) return;
-    var a=document.createElement("a");
-    a.href="data:application/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(state.data,null,2));
-    a.download="data.json";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  }
-  function clearCachedData(){
-    if(!confirm("Clear ALL locally stored data (cached dashboard + saved PAT)?")) return;
-    try { localStorage.removeItem(DATA_KEY); } catch(e){}
-    if (state.cfg){ /* keep cfg so user can re-auth easily */ }
-    state.data = null;
-    showOnly("screen-ghauth");
-    initGhAuthScreen();
-    refreshSourcePill("Local cache cleared. Pick a source.");
-  }
-  function refreshFromPAT(){
-    if (!state.cfg || !state.cfg.repo){ refreshSourcePill("No saved connection — open Connect and add a PAT."); return; }
-    if (!state.cfg.pat){ refreshSourcePill("PAT is in-memory only — open Connect and re-enter your PAT to fetch fresh data."); return; }
-    var url = "https://raw.githubusercontent.com/"+state.cfg.repo+"/"+state.cfg.branch+"/data.json?_="+Date.now();("No saved connection — open Connect and add a PAT."); return; }
-    var url = "https://raw.githubusercontent.com/"+state.cfg.repo+"/"+state.cfg.branch+"/data.json?_="+Date.now();
-    fetch(url, {headers:{"Authorization":"token "+state.cfg.pat}, cache:"no-store"})
-      .then(function(res){
-        if(!res.ok){ refreshSourcePill("Refresh failed — HTTP "+res.status); return; }
-        return res.json();
-      })
-      .then(function(d){
-        ingest(d);
-        try{saveData();}catch(e){}
-        showOnly("screen-dash");
-        refreshSourcePill(state.cfg.repo+"@"+state.cfg.branch+" — refreshed");
-        renderAll();
-      })
-      .catch(function(){
-        refreshSourcePill("Network error refreshing — try Connect → Paste JSON");
-      });
-  }
-
-  // ----- Tabs -----
-  function onTab(e){
-    var n=e.currentTarget.dataset.tab;
-    [].slice.call(document.querySelectorAll(".tab")).forEach(function(x){x.classList.toggle("active", x.dataset.tab===n);});
-    [].slice.call(document.querySelectorAll(".tab-panel")).forEach(function(p){p.classList.toggle("active", p.id==="tab-"+n);});
-  }
-
-  // ----- Boot -----
-  function boot(){
-    try { var r = JSON.parse(localStorage.getItem(CFG_KEY) || "null"); if (r && r.pat) { delete r.pat; localStorage.setItem(CFG_KEY, JSON.stringify(r)); } } catch(e){}
-    loadPersisted();
-    if ($("#pin-setup-submit"))     $("#pin-setup-submit").onclick      = onPinSetupSubmit;
-    if ($("#pin-submit"))           $("#pin-submit").onclick            = onPinSubmit;
-    if ($("#pin-set-link"))         $("#pin-set-link").onclick          = onPinSetLinkClick;
-    if ($("#pin-forgot-link"))      $("#pin-forgot-link").onclick       = onPinForgetClick;
-    if ($("#gh-option-pat"))        $("#gh-option-pat").onclick         = onPickPat;
-    if ($("#gh-option-upload"))     $("#gh-option-upload").onclick      = onPickUpload;
-    if ($("#gh-option-paste"))      $("#gh-option-paste").onclick       = onPickPaste;
-    if ($("#gh-option-demo"))       $("#gh-option-demo").onclick        = onPickDemo;
-    if ($("#gh-connect"))           $("#gh-connect").onclick            = onGhConnect;
-    if ($("#gh-file"))              $("#gh-file").onchange             = onGhFile;
-    if ($("#gh-btn-paste-load"))     $("#gh-btn-paste-load").onclick     = onGhPasteLoad;
-
-    [].slice.call(document.querySelectorAll(".tab")).forEach(function(t){ t.onclick = onTab; });
-
-    if ($("#ds-btn-export"))        $("#ds-btn-export").onclick         = exportJSON;
-    if ($("#ds-btn-clear"))         $("#ds-btn-clear").onclick          = clearCachedData;
-    if ($("#refresh-dash"))         $("#refresh-dash").onclick          = refreshFromPAT;
-    if ($("#logout-btn"))           $("#logout-btn").onclick            = function(){
-      showOnly("screen-pin");
-      $("#pin-input").value=""; $("#pin-input").focus();
-    };
-
-    try {
-      var t=localStorage.getItem("portfolio-theme");
-      if (t==="light") document.body.classList.add("theme-light");
-    } catch(e){}
-    var tt=$("#theme-toggle"); if(tt) tt.onclick=function(){
-      var isL=document.body.classList.toggle("theme-light");
-      try{localStorage.setItem("portfolio-theme", isL?"light":"dark");}catch(e){}
-    };
-
-    if (!state.pinConfigured) showOnly("screen-pin-setup");
-    else                         showOnly("screen-pin");
-    setTimeout(function(){ if (!state.pinConfigured) ($("#pin-new")||{}).focus(); else ($("#pin-input")||{}).focus();}, 50);
-  }
-  document.addEventListener("DOMContentLoaded", boot);
-})();
-</script>
 </head>
-<body class="theme-dark">
+<body>
+<div class="page">
+  <div class="shell" id="lock-wrap">
+    <div class="brand">
+      <div class="logo">◈</div>
+      <h1>Portfolio</h1>
+      <p>Sign in to continue</p>
+    </div>
 
-<header class="topbar">
-  <div style="display:flex;align-items:center;gap:10px;">
-    <div class="brand-mark" style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg, var(--accent), var(--accent-2));display:grid;place-items:center;">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
-        <rect x="3" y="14" width="4" height="7"  rx="1"/>
-        <rect x="10" y="9" width="4" height="12" rx="1"/>
-        <rect x="17" y="4" width="4" height="17" rx="1"/>
-      </svg>
+    <div class="card" id="card-auth">
+      <div class="card-head">
+        <h2 id="auth-title">Device PIN</h2>
+        <div class="step-dots" aria-hidden="true"><i id="dot1" class="on"></i><i id="dot2"></i></div>
+      </div>
+      <div class="card-body">
+        <!-- PIN -->
+        <div id="stage-pin">
+          <div class="field">
+            <label class="label" for="pin-input">PIN</label>
+            <input id="pin-input" class="input mono" type="password" inputmode="numeric" autocomplete="off" placeholder="Enter PIN" maxlength="32" />
+            <div class="hint">Local to this device only.</div>
+          </div>
+          <div class="field hidden" id="pin-confirm-field">
+            <label class="label" for="pin-confirm">Confirm PIN</label>
+            <input id="pin-confirm" class="input mono" type="password" autocomplete="off" placeholder="Confirm PIN" />
+          </div>
+          <div id="pin-error" class="error"></div>
+          <div id="pin-success" class="success"></div>
+          <button id="btn-pin" class="btn primary">Continue</button>
+          <div class="sub-actions">
+            <button id="btn-pin-reset" class="link" type="button">Reset PIN</button>
+            <span class="hint mono" id="pin-state-label" style="font-size:11px"></span>
+          </div>
+          <div class="hidden"><div id="pin-setup-hint"></div><div id="pin-unlock-hint"></div><div id="pin-hint"></div><div id="prog" style="display:none"></div></div>
+        </div>
+
+        <!-- GitHub -->
+        <div id="stage-github" class="hidden">
+          <div class="row">
+            <div class="field">
+              <label class="label" for="gh-user">GitHub username</label>
+              <input id="gh-user" class="input" type="text" autocomplete="off" placeholder="username" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label class="label" for="gh-repo">Private repo</label>
+              <input id="gh-repo" class="input" type="text" autocomplete="off" placeholder="portfolio-private" spellcheck="false" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="gh-token">Personal access token</label>
+            <input id="gh-token" class="input mono" type="password" autocomplete="off" placeholder="github_pat_…" spellcheck="false" />
+            <div class="hint">Fine-grained, scoped to this repo only · Contents: Read & write · 90-day expiry.</div>
+          </div>
+          <details>
+            <summary><span>Advanced (branch / path)</span></summary>
+            <div class="row" style="margin-top:10px">
+              <div class="field"><label class="label" for="gh-branch">Branch</label><input id="gh-branch" class="input mono" type="text" value="main" spellcheck="false" /></div>
+              <div class="field"><label class="label" for="gh-path">File</label><input id="gh-path" class="input mono" type="text" value="data.json" spellcheck="false" /></div>
+            </div>
+          </details>
+          <div id="gh-error" class="error" style="margin-top:10px"></div>
+          <div id="gh-success" class="success" style="margin-top:10px"></div>
+          <button id="btn-gh" class="btn primary" style="margin-top:12px">Sign in</button>
+          <div class="sep">or</div>
+          <button id="btn-gh-demo" class="btn ghost" type="button">Use demo mode</button>
+          <div class="sub-actions" style="justify-content:center">
+            <button id="btn-back-pin" class="link" type="button">← Back</button>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="stage-loading" class="hidden" style="text-align:center;padding:16px 0">
+          <div style="font-size:22px;margin-bottom:8px">⟳</div>
+          <div style="font-weight:750;font-size:13px">Signing in…</div>
+          <div class="hint" style="margin-top:4px" id="loading-hint">Verifying with GitHub</div>
+          <div style="height:3px;background:rgba(255,255,255,0.08);border-radius:999px;overflow:hidden;margin:12px auto 0;max-width:180px"><i id="prog-load" style="display:block;height:100%;width:70%;background:var(--accent);border-radius:999px"></i></div>
+        </div>
+      </div>
     </div>
-    <div><h1 style="font-size:16px;margin:0;">Quanta</h1>
-      <div style="font-size:11px;color:var(--muted);">Personal dashboard</div>
-    </div>
+
+    <div class="foot">No data is stored in the public site · Token stays in memory only</div>
   </div>
-  <div class="topbar-actions">
-    <span class="data-source-pill" id="data-source-pill" title="Where the rendered data lives"
-          style="font-size:11px;background:var(--panel-2);border:1px solid var(--border);padding:4px 8px;border-radius:999px;">No data loaded</span>
-    <button id="logout-btn" title="Lock and return to PIN screen"
-            style="background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:5px 9px;color:var(--text);cursor:pointer;">
-      Lock
-    </button>
-    <button id="theme-toggle" title="Toggle dark/light"
-            style="background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:5px 9px;color:var(--text);cursor:pointer;">
-      ◐
-    </button>
-  </div>
-</header>
+</div>
 
-<main>
-
-  <!-- ============== Step 1a: create PIN (first time) ============== -->
-  <section id="screen-pin-setup" class="screen hidden">
-    <div class="auth-shell">
-      <div class="auth-card">
-        <h2>Create your PIN</h2>
-        <p class="muted">First-time setup. Your PIN is stored as a hash in this browser tab only.</p>
-        <form id="pin-setup-form" onsubmit="return false;">
-          <label>New PIN (min 4 chars)
-            <input id="pin-new" type="password" autocomplete="new-password" required>
-          </label>
-          <label>Confirm PIN
-            <input id="pin-new-confirm" type="password" autocomplete="new-password" required>
-          </label>
-          <button id="pin-setup-submit" type="submit" class="btn">Save PIN</button>
-        </form>
-        <div id="pin-setup-error" class="auth-error"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== Step 1b: enter PIN (returning) ============== -->
-  <section id="screen-pin" class="screen">
-    <div class="auth-shell">
-      <div class="auth-card">
-        <h2>Enter your PIN</h2>
-        <p class="muted">Unlocks this dashboard on this device.</p>
-        <form id="pin-form" onsubmit="return false;">
-          <label>PIN
-            <input id="pin-input" type="password" autocomplete="current-password" required>
-          </label>
-          <button id="pin-submit" type="submit" class="btn">Unlock</button>
-        </form>
-        <div id="pin-error" class="auth-error"></div>
-        <div style="margin-top:14px;display:flex;gap:6px;">
-          <button id="pin-set-link" class="btn ghost small" type="button">First time? Set a PIN</button>
-          <button id="pin-forgot-link" class="btn ghost small" type="button">Forgot PIN</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== Step 2: GitHub auth ============== -->
-  <section id="screen-ghauth" class="screen hidden">
-    <div class="auth-shell">
-      <div class="auth-card">
-        <h2>Connect your data source</h2>
-        <p class="muted">Pick a method. Nothing leaves this browser except a tokenized read of your <code>data.json</code>.</p>
-
-        <p id="gh-status" class="muted" style="margin-top:0;"></p>
-
-        <div class="auth-options">
-          <button id="gh-option-pat"     type="button" class="btn">Use GitHub PAT</button>
-          <button id="gh-option-upload"  type="button" class="btn ghost">Upload data.json</button>
-          <button id="gh-option-paste"   type="button" class="btn ghost">Paste JSON</button>
-          <button id="gh-option-demo"    type="button" class="btn ghost">Empty sample</button>
-        </div>
-
-        <div id="gh-pane-pat" class="hidden" style="margin-top:12px;">
-          <label>Repo (owner/name) <input id="gh-repo" type="text" autocomplete="off" placeholder="owner/quanta-private"></label>
-          <label>Branch <input id="gh-branch" type="text" autocomplete="off" value="main"></label>
-          <label>Personal Access Token <input id="gh-pat" type="password" autocomplete="off"></label>
-          <button id="gh-connect" type="button" class="btn">Connect &amp; load</button>
-          <div id="gh-error" class="auth-error"></div>
-        </div>
-
-        <div id="gh-pane-upload" class="hidden" style="margin-top:12px;">
-          <input type="file" id="gh-file" accept="application/json,.json" style="display:none">
-          <button id="gh-btn-file" type="button" class="btn">Pick data.json…</button>
-        </div>
-
-        <div id="gh-pane-paste" class="hidden" style="margin-top:12px;">
-          <label>Paste data.json 
-            <textarea id="gh-textarea" rows="10" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:var(--bg-2);color:var(--text);border:1px solid var(--border-2);border-radius:7px;padding:9px 11px;font-family:inherit;font-size:13px;"
-              placeholder='{"username":"", "holdings":[], "funds":[], "monitoring":[], "recommendations":[], "pulse":{...}}'></textarea>
-          </label>
-          <button id="gh-btn-paste-load" type="button" class="btn">Load from pasted text</button>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============== Step 3: Dashboard ============== -->
-  <section id="screen-dash" class="screen hidden">
-
-    <div class="ds-bar">
-      <div class="left">
-        <span id="ds-status-text">No data loaded.</span>
-      </div>
-      <div class="right">
-        <button id="refresh-dash">Refresh</button>
-        <button id="ds-btn-export" disabled>Export JSON</button>
-        <button id="ds-btn-clear" disabled>Clear cached</button>
-      </div>
-    </div>
-
-    <div style="padding: 0 24px 32px;">
-
-      <nav class="tabs">
-        <button class="tab active" data-tab="recommendations">Recommendations</button>
-        <button class="tab" data-tab="holdings">Holdings</button>
-        <button class="tab" data-tab="monitoring">Monitoring</button>
-      </nav>
-
-      <section id="tab-recommendations" class="tab-panel active">
-
-        <div class="summary-bar">
-          <div class="stat"><span class="label">Holdings</span><span class="value accent" data-stat="holdings">0</span></div>
-          <div class="stat"><span class="label">Buying power</span><span class="value" data-stat="capital">—</span></div>
-          <div class="stat"><span class="label">Flagged</span><span class="value warn" data-stat="flagged">0</span></div>
-          <div class="stat"><span class="label">Suggestions</span><span class="value good" data-stat="suggestions">0</span></div>
-        </div>
-
-        <div class="pulse-panel">
-          <div class="pulse-head">
-            <div class="pulse-head-left">
-              <span class="pulse-dot" id="pulse-dot"></span>
-              <h3>Market Pulse</h3>
-              <span class="pulse-when" id="pulse-when">—</span>
-            </div>
-          </div>
-          <div class="pulse-body">
-            <div class="pulse-score">
-              <div class="pulse-score-num" id="pulse-score-num">—</div>
-              <div class="pulse-score-lbl">Health score</div>
-              <div class="pulse-score-hint">Composite: OK = 100, Yellow = 50, Red = 0</div>
-            </div>
-            <div class="pulse-bars">
-              <div class="pulse-bar-row"><span class="dot green"></span><span class="pulse-bar-lbl">OK</span><span class="pulse-bar-val" id="pulse-ok">0 holdings</span></div>
-              <div class="pulse-bar-row"><span class="dot yellow"></span><span class="pulse-bar-lbl">Yellow</span><span class="pulse-bar-val" id="pulse-yellow">0 holdings</span></div>
-              <div class="pulse-bar-row"><span class="dot red"></span><span class="pulse-bar-lbl">Red</span><span class="pulse-bar-val" id="pulse-red">0 holdings</span></div>
-            </div>
-            <div class="pulse-meta">
-              <div class="pulse-meta-item"><span class="pulse-meta-lbl">Concentration (top-3)</span><span class="pulse-meta-val" id="pulse-concentration">0%</span></div>
-              <div class="pulse-meta-item"><span class="pulse-meta-lbl">Holdings</span><span class="pulse-meta-val" id="pulse-total">0</span></div>
-            </div>
-          </div>
-          <div class="pulse-breakdown" id="pulse-breakdown"></div>
-        </div>
-
-        <div id="rec-group-switch-to" class="rec-group hidden">
-          <h3>Switch to</h3>
-          <div data-list style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;"></div>
-          <div data-empty class="muted">No data loaded.</div>
-        </div>
-        <div id="rec-group-buy" class="rec-group hidden">
-          <h3>Buy (new)</h3>
-          <div data-list style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;"></div>
-          <div data-empty class="muted">No data loaded.</div>
-        </div>
-        <div id="rec-group-increase-sip" class="rec-group hidden">
-          <h3>Increase SIP</h3>
-          <div data-list style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;"></div>
-          <div data-empty class="muted">No data loaded.</div>
-        </div>
-        <p class="muted">No recommendations yet — connect a data source above.</p>
-      </section>
-
-      <section id="tab-holdings" class="tab-panel">
-        <h2 style="margin-top:0;font-size:14px;">Holdings &amp; Funds</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div>
-            <h3 style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:0 0 6px;">Mutual Funds</h3>
-            <table class="data-table" id="funds-table">
-              <thead><tr><th>Fund</th><th>Type</th><th>Amount</th><th>Frequency</th><th>Benchmark</th><th>Status</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div>
-            <h3 style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:0 0 6px;">Stocks</h3>
-            <table class="data-table" id="stocks-table">
-              <thead><tr><th>Symbol</th><th>Qty</th><th>Avg Buy</th><th>Invested</th><th>Benchmark</th><th>Status</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="totals-bar" id="totals-bar"></div>
-      </section>
-
-      <section id="tab-monitoring" class="tab-panel">
-
-        <div class="mon-section">
-          <div class="mon-section-header"><h3>Mutual Funds</h3><span class="count" id="mon-funds-count">0 items</span></div>
-          <div id="mon-funds-list" class="mon-grid"></div>
-          <div id="mon-funds-empty" class="mon-empty">No data loaded.</div>
-        </div>
-
-      </section>
-
-      <section id="tab-monitoring2" class="tab-panel">
-
-        <div class="mon-section">
-          <div class="mon-section-header"><h3>Stocks</h3><span class="count" id="mon-stocks-count">0 items</span></div>
-          <div id="mon-stocks-list" class="mon-grid"></div>
-          <div id="mon-stocks-empty" class="mon-empty">No data loaded.</div>
-        </div>
-
-      </section>
-
-    </div>
-  </section>
-
-</main>
+<div id="app-host"></div>
+<div id="toast-wrap"></div>
 
 <script>
-// Wiring (same logic as before — ensures tabs/internal links work)
-(function () {
-  [].slice.call(document.querySelectorAll(".tab")).forEach(function(t){
-    t.addEventListener("click", function(){
-      [].slice.call(document.querySelectorAll(".tab")).forEach(function(x){ x.classList.toggle("active", x.dataset.tab === t.dataset.tab); });
-      [].slice.call(document.querySelectorAll(".tab-panel")).forEach(function(p){ p.classList.toggle("active", p.id === "tab-" + t.dataset.tab); });
-    });
+(() => {
+  "use strict";
+  const SESSION = { username: null, repo: null, token: null, branch: "main", path: "data.json" };
+  let inactivityTimer = null;
+  const INACTIVITY_MS = 15 * 60 * 1000;
+  const $ = (id) => document.getElementById(id);
+  const errPin = $("pin-error"), okPin = $("pin-success"), errGh = $("gh-error"), okGh = $("gh-success");
+  function show(el, msg){ el.textContent = msg; el.classList.add("show"); }
+  function hide(el){ el.textContent=""; el.classList.remove("show"); }
+  function toast(msg){
+    const w=$("toast-wrap"); const d=document.createElement("div"); d.className="toast"; d.textContent=msg; w.appendChild(d);
+    setTimeout(()=>{ d.style.opacity="0"; d.style.transform="translateY(4px)"; d.style.transition="all .25s"; setTimeout(()=>d.remove(),250)},2700);
+  }
+  async function hashPin(pin, salt){
+    const enc = new TextEncoder();
+    const data = enc.encode(pin + salt);
+    const digest = await crypto.subtle.digest("SHA-256", data);
+    return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  function getSalt(){ return localStorage.getItem("portfolioPinSalt"); }
+  function getHash(){ return localStorage.getItem("portfolioPinHashV1"); }
+  function hasPin(){ return !!getSalt() && !!getHash(); }
+  function setProgress(pct){
+    const prog=$("prog"); if(prog) prog.style.width=pct+"%";
+    const d1=$("dot1"), d2=$("dot2");
+    if(!d1||!d2) return;
+    if(pct<50){ d1.classList.add("on"); d2.classList.remove("on"); }
+    else { d1.classList.add("on"); d2.classList.add("on"); }
+  }
+  function refreshPinUI(){
+    const has = hasPin();
+    const title=$("auth-title");
+    if(title) title.textContent = has ? "Enter PIN" : "Set a PIN";
+    const btn=$("btn-pin");
+    if(btn) btn.textContent = has ? "Continue" : "Set PIN & continue";
+    const confirmField=$("pin-confirm-field");
+    if(confirmField) confirmField.classList.toggle("hidden", has);
+    const label=$("pin-state-label");
+    if(label) label.textContent = "";
+    setProgress(33);
+  }
+  async function handlePin(){
+    hide(errPin); hide(okPin);
+    const pin = $("pin-input").value;
+    const confirm = $("pin-confirm").value;
+    if (!pin || pin.length < 4) { show(errPin, "PIN must be at least 4 characters."); return; }
+    if (!hasPin() && pin !== confirm) { show(errPin, "PINs do not match."); return; }
+    if (!hasPin()){
+      const saltArr = new Uint8Array(16); crypto.getRandomValues(saltArr);
+      const salt = [...saltArr].map(b=>b.toString(16).padStart(2,"0")).join("");
+      const h = await hashPin(pin, salt);
+      localStorage.setItem("portfolioPinSalt", salt);
+      localStorage.setItem("portfolioPinHashV1", h);
+      $("pin-input").value=""; $("pin-confirm").value="";
+      show(okPin, "PIN set.");
+      setTimeout(()=> goGithub(), 350);
+    } else {
+      const salt = getSalt();
+      const h = await hashPin(pin, salt);
+      $("pin-input").value="";
+      if (h !== getHash()) { show(errPin, "Incorrect PIN."); return; }
+      show(okPin, "PIN verified.");
+      setTimeout(()=> goGithub(), 300);
+    }
+  }
+  function goGithub(){
+    $("stage-pin").classList.add("hidden");
+    $("stage-github").classList.remove("hidden");
+    $("stage-loading").classList.add("hidden");
+    const t=$("auth-title"); if(t) t.textContent="GitHub sign in";
+    setProgress(66);
+    $("gh-user").focus();
+  }
+  function goPin(){
+    $("stage-pin").classList.remove("hidden");
+    $("stage-github").classList.add("hidden");
+    $("stage-loading").classList.add("hidden");
+    refreshPinUI();
+  }
+  async function verifyAndLoad(){
+    hide(errGh); hide(okGh);
+    const username = $("gh-user").value.trim();
+    const repo = $("gh-repo").value.trim();
+    const token = $("gh-token").value;
+    const branch = $("gh-branch").value.trim() || "main";
+    const path = $("gh-path").value.trim() || "data.json";
+    if (!username || !repo || !token) { show(errGh, "Username, repo and token are required."); return; }
+    if (token === "demo"){
+      SESSION.username = username || "demo"; SESSION.repo = repo || "demo"; SESSION.token = "demo"; SESSION.branch = branch; SESSION.path = path;
+      show(okGh, "Demo mode — loading local data.");
+      setTimeout(()=> loadApp(), 300);
+      return;
+    }
+    SESSION.username = username; SESSION.repo = repo; SESSION.token = token; SESSION.branch = branch; SESSION.path = path;
+    $("stage-github").classList.add("hidden");
+    $("stage-loading").classList.remove("hidden");
+    const t=$("auth-title"); if(t) t.textContent="Verifying…";
+    setProgress(90);
+    try {
+      const url = `https://api.github.com/repos/${encodeURIComponent(username)}/${encodeURIComponent(repo)}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+      const res = await fetch(url, { headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" }, cache: "no-store" });
+      if (!res.ok){
+        throw new Error(res.status === 404 ? "Repo or file not found." : res.status === 401 ? "Invalid or expired token." : `GitHub error ${res.status}.`);
+      }
+      const j = await res.json();
+      window.__GH_LAST_SHA__ = j.sha;
+      show(okGh, "Verified.");
+      setTimeout(()=> loadApp(), 300);
+    } catch(e){
+      SESSION.token = null;
+      $("stage-loading").classList.add("hidden");
+      $("stage-github").classList.remove("hidden");
+      const t=$("auth-title"); if(t) t.textContent="GitHub sign in";
+      setProgress(66);
+      show(errGh, e.message || "Verification failed.");
+      toast("Sign in failed");
+    }
+  }
+  async function loadApp(){
+    const isDemo = SESSION.token === "demo";
+    const t=$("auth-title"); if(t) t.textContent="Loading…";
+    try {
+      if (!isDemo && SESSION.token){
+        const base = `https://api.github.com/repos/${encodeURIComponent(SESSION.username)}/${encodeURIComponent(SESSION.repo)}/contents`;
+        const headers = { "Authorization": `token ${SESSION.token}`, "Accept": "application/vnd.github.v3+json" };
+        const fetchFile = async (name) => {
+          const r = await fetch(`${base}/${encodeURIComponent(name)}?ref=${encodeURIComponent(SESSION.branch)}`, { headers, cache:"no-store" });
+          if (!r.ok) throw new Error(`Missing ${name}`);
+          const j = await r.json();
+          const b64 = j.content.replace(/\n/g,"");
+          const bin = atob(b64);
+          const bytes = Uint8Array.from(bin, c=>c.charCodeAt(0));
+          return new TextDecoder().decode(bytes);
+        };
+        const [css, js] = await Promise.all([fetchFile("style.css"), fetchFile("app.js")]);
+        injectApp(css, js);
+      } else {
+        let css = null, js = null;
+        const tryFetch = async (paths) => {
+          for (const p of paths){
+            try{ const r=await fetch(p,{cache:"no-store"}); if(r.ok) return await r.text(); }catch{}
+          }
+          return null;
+        };
+        css = await tryFetch(["./private/style.css","/private/style.css","../private/style.css"]);
+        js  = await tryFetch(["./private/app.js","/private/app.js","../private/app.js"]);
+        if (!css || !js) throw new Error("Private files not found.");
+        injectApp(css, js);
+      }
+    } catch(e){
+      $("stage-loading").classList.add("hidden");
+      $("stage-github").classList.remove("hidden");
+      show(errGh, e.message || "Failed to load app. Use token 'demo' for preview.");
+    }
+  }
+  function injectApp(css, js){
+    window.__GH_SESSION__ = { ...SESSION };
+    window.__GH_CONFIG__ = { username: SESSION.username, repo: SESSION.repo, branch: SESSION.branch };
+    const style = document.createElement("style");
+    style.id = "private-style";
+    style.textContent = css;
+    document.head.appendChild(style);
+    $("lock-wrap").parentElement.style.display="none";
+    document.querySelector(".page").style.display="none";
+    const host = $("app-host");
+    host.classList.add("show");
+    host.innerHTML = `
+      <div class="app-shell" style="max-width:1180px;margin:0 auto;padding:18px 16px 40px">
+        <div class="topbar" style="position:sticky;top:12px;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));border:1px solid rgba(255,255,255,0.08);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.45);backdrop-filter:blur(10px)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:grid;place-items:center;font-weight:900">◈</div>
+            <div>
+              <div style="font-weight:900;letter-spacing:-0.02em">Portfolio v3 — Recommendations & Monitoring</div>
+              <div style="font-size:12px;color:var(--muted)">Private app loaded via GitHub API • in-memory session only</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span id="kpi-session" class="pill" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.09);font-size:11px;color:var(--muted)">—</span>
+            <button id="btn-logout" class="btn small" style="border-color:rgba(239,68,68,0.25);color:#fecaca;background:rgba(239,68,68,0.12);padding:8px 12px;border-radius:999px;font-size:12px;width:auto">Log out</button>
+          </div>
+        </div>
+        <div class="tabs" style="display:flex;gap:8px;margin:18px 0 14px;overflow:auto;padding-bottom:2px">
+          <button data-tab="holdings" class="tab-btn active" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--border);background:#fff;color:#0f172a;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">💼 Holdings <span class="count" id="tab-count-hold" style="font-size:11px;padding:2px 7px;border-radius:999px;background:#0f172a;color:#fff">—</span></button>
+          <button data-tab="recommendations" class="tab-btn" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">✨ Recommendations <span class="count" id="tab-count-rec" style="font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,0.10)">—</span></button>
+          <button data-tab="monitoring" class="tab-btn" style="display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap"><span class="badge-dot red" style="display:inline-block;width:8px;height:8px;border-radius:999px;background:#ef4444"></span> Monitoring <span class="count" id="tab-count-mon" style="font-size:11px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,0.10)">—</span></button>
+        </div>
+        <div id="stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px"></div>
+        <div id="panel-holdings" class="tab-panel">
+          <div class="toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+            <div class="search" style="position:relative;flex:1;min-width:220px">
+              <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:0.6">🔍</span>
+              <input id="global-search" class="input" placeholder="Search holdings, funds, benchmark…" style="padding-left:34px" />
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button id="btn-add-stock" class="btn small primary" style="width:auto;padding:8px 12px;border-radius:999px;background:#3b82f6;color:#fff;font-size:12px">+ Add Stock</button>
+              <button id="btn-add-fund" class="btn small" style="width:auto;padding:8px 12px;border-radius:999px">+ Add Fund</button>
+              <button id="btn-export" class="btn small ghost" style="width:auto;padding:8px 12px;border-radius:999px">⬇ Export</button>
+            </div>
+          </div>
+          <div class="card" style="background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));border:1px solid var(--border);border-radius:16px;overflow:hidden">
+            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Stocks — 14 positions</h2><span class="pill" id="stocks-count" style="font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--border)">—</span></div>
+            <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:12px;margin:12px">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead><tr><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Symbol</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Qty</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Avg Price</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Invested</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">LTP / Value</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">P&L</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Badge</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Actions</th></tr></thead>
+                <tbody id="stocks-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));border:1px solid var(--border);border-radius:16px;overflow:hidden">
+            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Mutual Funds — 13 entries</h2><span class="pill" id="funds-count">—</span></div>
+            <div class="table-wrap" style="overflow:auto;border:1px solid var(--border);border-radius:12px;margin:12px">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead><tr><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Fund Name</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Type</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Amount</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Badge</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">6Mo</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">1Y</th><th style="font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border)">Actions</th></tr></thead>
+                <tbody id="funds-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="panel-recommendations" class="tab-panel hidden">
+          <div class="card" style="background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));border:1px solid var(--border);border-radius:16px;overflow:hidden">
+            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Ranked ideas</h2><button id="btn-run-recs" class="btn small primary" style="width:auto">⟳ Re-analyze</button></div>
+            <div class="card-body" style="padding:14px 16px"><div class="hint" id="rec-meta" style="margin-bottom:10px"></div><div id="rec-flag-strip" style="margin-bottom:12px"></div><div id="rec-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div></div>
+          </div>
+        </div>
+        <div id="panel-monitoring" class="tab-panel hidden">
+          <div class="card" style="background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));border:1px solid var(--border);border-radius:16px;overflow:hidden">
+            <div class="card-header" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)"><h2 style="margin:0;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Monitoring</h2><button id="btn-recheck" class="btn small" style="width:auto">⟳ Re-check now</button></div>
+            <div class="card-body" style="padding:14px 16px"><div id="monitor-toolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px"></div><div id="monitor-list"></div></div>
+          </div>
+        </div>
+        <div id="app-root" style="display:none"></div>
+      </div>
+      <div id="stock-modal" class="modal hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:16px"><div style="width:min(720px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg, #141f39, #0f1a33);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)"><div style="padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><h3 id="stock-modal-title" style="margin:0;font-weight:900">Add Stock</h3><button data-close-modal class="btn small ghost" style="width:auto">✕</button></div><div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label class="label">Symbol *</label><input id="f-stock-symbol" class="input mono" placeholder="e.g., TCS" /></div><div class="field"><label class="label">Company</label><input id="f-stock-company" class="input" placeholder="Company name" /></div><div class="field"><label class="label">Qty</label><input id="f-stock-qty" class="input mono" type="number" step="any" placeholder="10" /></div><div class="field"><label class="label">Avg Price (₹)</label><input id="f-stock-avg" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Invested (₹)</label><input id="f-stock-invested" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">LTP (₹)</label><input id="f-stock-ltp" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Sector</label><input id="f-stock-sector" class="input" placeholder="e.g., IT" /></div><div class="field"><label class="label">Benchmark</label><input id="f-stock-bench" class="input" placeholder="e.g., Nifty IT" /></div><div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div><div style="grid-column:1/-1;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Performance vs Benchmark (%)</div><div class="field"><label class="label">Holding 6Mo</label><input id="f-stock-6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 6Mo</label><input id="f-stock-b6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 1Y</label><input id="f-stock-1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 1Y</label><input id="f-stock-b1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 3Y</label><input id="f-stock-3yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 3Y</label><input id="f-stock-b3yr" class="input mono" type="number" step="any" /></div></div><div style="padding:14px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)"><button data-close-modal class="btn small ghost" style="width:auto">Cancel</button><button id="btn-stock-save" class="btn small primary" style="width:auto">Save</button></div></div></div>
+      <div id="fund-modal" class="modal hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:16px"><div style="width:min(720px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg, #141f39, #0f1a33);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)"><div style="padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><h3 id="fund-modal-title" style="margin:0;font-weight:900">Add Fund</h3><button data-close-modal class="btn small ghost" style="width:auto">✕</button></div><div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field" style="grid-column:1/-1"><label class="label">Fund Name *</label><input id="f-fund-name" class="input" placeholder="Fund name" /></div><div class="field"><label class="label">Type</label><select id="f-fund-type" class="input"><option value="SIP">SIP</option><option value="Lumpsum">Lumpsum</option></select></div><div class="field"><label class="label">Amount (₹)</label><input id="f-fund-amount" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Category</label><input id="f-fund-cat" class="input" placeholder="e.g., Flexi Cap" /></div><div class="field"><label class="label">Benchmark</label><input id="f-fund-bench" class="input" placeholder="e.g., Nifty 500 TRI" /></div><div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div><div style="grid-column:1/-1;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);font-weight:800">Performance vs Benchmark (%)</div><div class="field"><label class="label">Holding 6Mo</label><input id="f-fund-6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 6Mo</label><input id="f-fund-b6mo" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 1Y</label><input id="f-fund-1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 1Y</label><input id="f-fund-b1yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Holding 3Y</label><input id="f-fund-3yr" class="input mono" type="number" step="any" /></div><div class="field"><label class="label">Benchmark 3Y</label><input id="f-fund-b3yr" class="input mono" type="number" step="any" /></div></div><div style="padding:14px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border)"><button data-close-modal class="btn small ghost" style="width:auto">Cancel</button><button id="btn-fund-save" class="btn small primary" style="width:auto">Save</button></div></div></div>
+      <div id="toast-wrap"></div>
+    `;
+    if (!document.getElementById("app-root")){
+      const s=document.createElement("div"); s.id="app-root"; s.style.display="none"; host.appendChild(s);
+    }
+    const script=document.createElement("script");
+    script.id="private-app";
+    script.textContent = js;
+    document.body.appendChild(script);
+    resetInactivity();
+    ["click","keydown","mousemove","touchstart"].forEach(ev=> document.addEventListener(ev, resetInactivity, {passive:true}));
+    toast("Signed in");
+  }
+  function resetInactivity(){
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(()=> clearSession("Session expired — please sign in again."), INACTIVITY_MS);
+  }
+  function clearSession(msg){
+    SESSION.username = null; SESSION.repo = null; SESSION.token = null; SESSION.branch="main";
+    window.__GH_SESSION__ = null; window.__GH_CONFIG__ = null;
+    const host=$("app-host"); if(host){ host.classList.remove("show"); host.innerHTML=""; }
+    const st=document.getElementById("private-style"); if(st) st.remove();
+    const sc=document.getElementById("private-app"); if(sc) sc.remove();
+    const page=document.querySelector(".page");
+    if(page) page.style.display="grid";
+    const wrap=$("lock-wrap"); if(wrap) wrap.parentElement.style.display="grid";
+    document.querySelector(".page").style.display="grid";
+    goPin();
+    hide(errGh); hide(okGh);
+    if(msg) toast(msg);
+  }
+  window.__GH_CLEAR__ = clearSession;
+  window.addEventListener("beforeunload", ()=> { SESSION.token=null; });
+  window.addEventListener("pagehide", ()=> { SESSION.token=null; });
+  $("btn-pin").addEventListener("click", handlePin);
+  $("pin-input").addEventListener("keydown", e=> { if(e.key==="Enter") handlePin(); });
+  $("pin-confirm").addEventListener("keydown", e=> { if(e.key==="Enter") handlePin(); });
+  $("btn-pin-reset").addEventListener("click", ()=>{
+    if(confirm("Reset device PIN?")){
+      localStorage.removeItem("portfolioPinSalt"); localStorage.removeItem("portfolioPinHashV1");
+      $("pin-input").value=""; $("pin-confirm").value=""; hide(errPin); hide(okPin); refreshPinUI(); toast("PIN reset");
+    }
   });
+  $("btn-gh").addEventListener("click", verifyAndLoad);
+  $("btn-gh-demo").addEventListener("click", ()=>{
+    $("gh-user").value = $("gh-user").value || "demo-user";
+    $("gh-repo").value = $("gh-repo").value || "portfolio-private";
+    $("gh-token").value = "demo";
+    verifyAndLoad();
+  });
+  $("btn-back-pin").addEventListener("click", goPin);
+  ["gh-user","gh-repo","gh-token","gh-branch","gh-path"].forEach(id=>{
+    const el=$(id); if(el) el.addEventListener("keydown", e=>{ if(e.key==="Enter") verifyAndLoad(); });
+  });
+  refreshPinUI();
+  if (new URLSearchParams(location.search).get("demo")==="1"){
+    setTimeout(()=>{
+      $("pin-input").value="1234"; $("pin-confirm").value="1234";
+      handlePin().then(()=> setTimeout(()=> { $("gh-token").value="demo"; verifyAndLoad(); }, 600));
+    }, 300);
+  }
 })();
 </script>
-
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2cf437dccc1446e',t:'MTc4NzAzODc1NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
