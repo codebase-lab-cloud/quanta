@@ -4,71 +4,85 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Personal Portfolio Advisor — Lock</title>
+<title>Quanta — Lock</title>
 <!--
   PUBLIC REPO — LOCK SCREEN ONLY.
   This file contains zero application logic, zero secrets, zero personal data.
   The real app (app.js, style.css, data.json) lives in the PRIVATE repo and is
   only fetched through the authenticated GitHub Contents API after the user
   passes both auth steps. Safe to view source.
+
+  Stored on device (localStorage):
+    pinSaltV1 / pinHashV1  — salted SHA-256 of the 4-digit PIN (never plaintext)
+    ghOwnerV1 / ghRepoV1   — username + repo name ONLY (convenience pre-fill)
+  NEVER stored anywhere: the Personal Access Token (in-memory for the session).
 -->
 <style>
   :root{
-    --bg:#f6f7f9; --card:#ffffff; --line:#e5e7eb; --text:#111827; --muted:#6b7280;
-    --accent:#4f46e5; --accent-ink:#ffffff; --ok:#16a34a; --warn:#d97706; --err:#dc2626;
+    --bg:#f6f7f9; --card:#ffffff; --line:#dedfe3; --line-soft:#e5e6e7;
+    --text:#101729; --muted:#677489; --faint:#8d97a7;
+    --accent:#4e81ee; --accent-hover:#3d72e0; --accent-soft:#eef3fd;
+    --err:#d45453; --err-soft:#fcf2f1; --err-line:#f4d2d1;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--bg); color:var(--text); min-height:100vh; display:flex;
+    align-items:center; justify-content:center;
     padding:24px; -webkit-font-smoothing:antialiased;
   }
   .lock-card{
-    width:100%; max-width:430px; background:var(--card); border:1px solid var(--line);
-    border-radius:16px; box-shadow:0 10px 30px rgba(17,24,39,.06); padding:28px;
+    width:100%; max-width:420px; background:var(--card); border:1px solid var(--line);
+    border-radius:16px; box-shadow:0 10px 30px rgba(16,23,41,.07); padding:30px 28px 26px;
   }
-  .brand{display:flex; align-items:center; gap:10px; margin-bottom:6px}
-  .brand .dot{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#7c3aed);
-    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px}
-  h1{font-size:19px;margin:0;letter-spacing:-.01em}
-  .sub{color:var(--muted);font-size:13px;margin:4px 0 20px;line-height:1.5}
+  .brand{display:flex; align-items:center; gap:14px; margin-bottom:22px}
+  .logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#4e81ee,#6a9af5);
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .logo svg{width:26px;height:26px}
+  h1{font-size:20px;margin:0;letter-spacing:-.01em;line-height:1.2}
+  .sub{color:var(--muted);font-size:13px;margin:2px 0 0;line-height:1.4}
+  .ic{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;line-height:0}
+
   .field{margin-bottom:14px}
-  label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px;color:#374151}
+  label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;margin-bottom:6px;color:#374151}
+  label .ic{color:var(--faint)}
   input[type=password],input[type=text]{
-    width:100%;padding:10px 12px;font-size:15px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);
+    width:100%;padding:11px 12px;font-size:15px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);
   }
-  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+  input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(78,129,238,.14)}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:420px){ .row2{grid-template-columns:1fr} }
+
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 14px;border-radius:9px;
     font-size:14.5px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:background .15s,opacity .15s}
   .btn:disabled{opacity:.55;cursor:default}
-  .btn-primary{background:var(--accent);color:var(--accent-ink)}
-  .btn-primary:hover:not(:disabled){background:#4338ca}
-  .btn-ghost{background:transparent;color:#374151;border-color:var(--line)}
-  .btn-ghost:hover:not(:disabled){background:#f3f4f6}
-  .error{display:none;color:var(--err);font-size:13px;margin:10px 0 0;background:#fef2f2;border:1px solid #fecaca;padding:9px 11px;border-radius:8px;line-height:1.45}
-  .note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5}
-  .hint{font-size:12.5px;color:var(--muted);margin:0 0 12px;line-height:1.5}
-  .divider{display:flex;align-items:center;gap:10px;margin:18px 0 6px;color:var(--muted);font-size:12px}
-  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
-  details.scope{margin-top:14px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fafafa}
+  .btn .ic{width:17px;height:17px}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--accent-hover)}
+  .btn-ghost{background:transparent;color:#374151;border-color:var(--line);width:auto}
+  .btn-ghost:hover:not(:disabled){background:#f2f4f8}
+
+  .error{display:none;color:var(--err);font-size:13px;margin:0 0 12px;background:var(--err-soft);
+    border:1px solid var(--err-line);padding:9px 12px;border-radius:8px;line-height:1.45}
+  .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.55}
+  .note b{color:#374151}
+
+  details.scope{margin-top:16px;border:1px solid var(--line);border-radius:10px;padding:11px 13px;background:#fafbfc}
   details.scope summary{cursor:pointer;font-size:12.5px;font-weight:600;color:#374151}
   details.scope p{font-size:12px;color:var(--muted);line-height:1.55;margin:8px 0 0}
-  .demo-link{display:block;text-align:center;font-size:12.5px;color:var(--accent);cursor:pointer;margin-top:16px;background:none;border:none;width:100%}
-  .demo-link:hover{text-decoration:underline}
-  .pin-dots{display:flex;gap:10px;justify-content:center;margin:6px 0 16px}
-  .pin-dots span{width:12px;height:12px;border-radius:50%;border:1.5px solid #cbd5e1;background:#fff}
+
+  .pin-dots{display:flex;gap:12px;justify-content:center;margin:4px 0 16px}
+  .pin-dots span{width:12px;height:12px;border-radius:50%;border:1.5px solid #c3c8d1;background:#fff;transition:all .1s}
   .pin-dots span.on{background:var(--accent);border-color:var(--accent)}
-  .status-ok{color:var(--ok);font-weight:600}
-  .status-err{color:var(--err);font-weight:600}
-  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+
+  .spinner{width:18px;height:18px;border:2.5px solid #dbe6fb;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
   @keyframes spin{to{transform:rotate(360deg)}}
   .hidden{display:none !important}
-  footer{margin-top:20px;font-size:11.5px;color:#9ca3af;text-align:center;line-height:1.5}
   #app-root{width:100%;max-width:none}
   body.app-mode{display:block;padding:0}
   body.app-mode .lock-card{display:none}
+  .loading-row{display:flex;align-items:center;gap:12px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -77,71 +91,94 @@
 
     <!-- PIN SCREEN -->
     <div id="view-pin">
-      <div class="brand"><div class="dot">P</div><h1>Personal Portfolio Advisor</h1></div>
-      <p class="sub" id="pin-sub">Set a 4-digit device PIN to gate casual access on this device.</p>
-      <div class="pin-dots" id="pin-dots">
-        <span></span><span></span><span></span><span></span>
+      <div class="brand">
+        <span class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>
+          </svg>
+        </span>
+        <div>
+          <h1>Quanta</h1>
+          <p class="sub" id="pin-sub">Set a 4-digit PIN to gate casual access on this device.</p>
+        </div>
       </div>
+      <div class="pin-dots" id="pin-dots"><span></span><span></span><span></span><span></span></div>
       <div class="field">
         <input type="password" id="pin-input" inputmode="numeric" maxlength="4" autocomplete="off"
-               placeholder="••••" aria-label="PIN" />
+               placeholder="••••" aria-label="PIN" style="text-align:center;letter-spacing:14px;font-size:20px" />
       </div>
       <p class="error" id="pin-error"></p>
       <button class="btn btn-primary" id="pin-submit-btn">Continue</button>
-      <button class="btn btn-ghost hidden" id="pin-reset-btn" style="margin-top:8px">Forgot PIN? Reset it on this device</button>
-      <p class="note">This PIN only gates casual access on <b>this device</b>. It is stored as a salted SHA-256 hash in your browser and is <b>not</b> cryptographically tied to your GitHub token. It does not protect your data from someone with real access to this device or its storage.</p>
+      <button class="btn btn-ghost hidden" id="pin-reset-btn" style="width:100%;margin-top:10px">Forgot PIN? Reset on this device</button>
+      <p class="note">This PIN only gates casual access on <b>this device</b>. It is stored as a salted SHA-256 hash and is <b>not</b> tied to your GitHub token. It does not protect your data from someone with real access to this device.</p>
     </div>
 
     <!-- GITHUB AUTH SCREEN -->
     <div id="view-auth" class="hidden">
-      <div class="brand"><div class="dot">P</div><h1>Unlock with GitHub</h1></div>
-      <p class="sub">Your app and data live in a private GitHub repo. Credentials are kept <b>in memory only</b> and erased the moment you close this tab or log out.</p>
+      <div class="brand">
+        <span class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>
+          </svg>
+        </span>
+        <div>
+          <h1>Quanta</h1>
+          <p class="sub">Unlock with GitHub — your app and data live in a private repo.</p>
+        </div>
+      </div>
       <form id="auth-form" autocomplete="off">
         <div class="row2">
           <div class="field">
-            <label for="f_owner">GitHub username</label>
+            <label for="f_owner">
+              <span class="ic"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
+              GitHub username
+            </label>
             <input type="text" id="f_owner" autocomplete="off" spellcheck="false" placeholder="octocat" />
           </div>
           <div class="field">
-            <label for="f_repo">Private repo</label>
+            <label for="f_repo">
+              <span class="ic"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+              Private repo
+            </label>
             <input type="text" id="f_repo" autocomplete="off" spellcheck="false" placeholder="portfolio-data" />
           </div>
         </div>
         <div class="field">
-          <label for="f_token">Personal Access Token</label>
+          <label for="f_token">
+            <span class="ic"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l7-7"/><path d="M15 8l2 2"/><path d="M12 11l1 1"/></svg></span>
+            Personal Access Token
+          </label>
           <input type="password" id="f_token" autocomplete="off" spellcheck="false"
                  placeholder="github_pat_…" aria-label="Personal Access Token" />
         </div>
-        <div class="row2">
-          <div class="field">
-            <label for="f_branch">Branch <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-            <input type="text" id="f_branch" autocomplete="off" spellcheck="false" placeholder="main" />
-          </div>
-          <div class="field">
-            <label for="f_path">File path prefix <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-            <input type="text" id="f_path" autocomplete="off" spellcheck="false" placeholder="(repo root)" />
-          </div>
-        </div>
         <p class="error" id="auth-error"></p>
-        <button class="btn btn-primary" id="auth-unlock-btn" type="submit">Verify &amp; unlock</button>
+        <button class="btn btn-primary" id="auth-unlock-btn" type="submit">
+          <span class="ic"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+          Verify &amp; unlock
+        </button>
       </form>
       <details class="scope">
-        <summary>Token scope guidance (read me)</summary>
+        <summary>Token scope guidance</summary>
         <p>Use a <b>fine-grained Personal Access Token</b> scoped to <b>only this one private repo</b>, with
         <b>Contents: Read and write</b> permission only, and a short expiration (e.g. 90 days), rotated periodically.
-        Never reuse a token that grants access to other repos. This app sends the token only to <b>api.github.com</b>
-        over HTTPS and never stores it anywhere.</p>
+        The token is sent only to <b>api.github.com</b> over HTTPS and is never stored anywhere.</p>
       </details>
-      <button type="button" class="demo-link" id="demo-link">Preview with bundled demo files (local only, no GitHub)</button>
-      <p class="note">Values you type here are never written to localStorage, sessionStorage, cookies, IndexedDB, the URL, or the DOM. They are asked fresh on every visit.</p>
+      <p class="note"><b>Remembered on this device:</b> username &amp; repo name (to pre-fill next time). <b>Never stored:</b> your token — it is held in memory only for this session and erased on close or log-out.</p>
     </div>
 
     <!-- LOADING SCREEN -->
     <div id="view-loading" class="hidden">
-      <div class="brand"><div class="dot">P</div><h1>Unlocking…</h1></div>
-      <p class="sub" id="loading-msg">Verifying token and fetching app files from the private repo.</p>
-      <div style="display:flex;justify-content:center;padding:6px 0 2px">
-        <span class="spinner" style="border-color:#c7d2fe;border-top-color:#4f46e5"></span>
+      <div class="brand">
+        <span class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>
+          </svg>
+        </span>
+        <div><h1>Quanta</h1></div>
+      </div>
+      <div class="loading-row">
+        <span class="spinner"></span>
+        <p class="sub" id="loading-msg" style="margin:0">Verifying token and fetching app files…</p>
       </div>
     </div>
 
@@ -150,44 +187,40 @@
   <!-- ============ APP MOUNT POINT (injected app renders here) ============ -->
   <div id="app-root" class="hidden"></div>
 
-  <footer>Personal Portfolio Advisor · lock screen · no data is stored here</footer>
-
 <script>
 'use strict';
 /* =========================================================================
-   LOCK SCREEN — all logic here is auth + bootstrap only. No app logic.
+   LOCK SCREEN — auth + bootstrap only. No app logic, no secrets.
    ========================================================================= */
 
-/* ---------------- config (edit per deployment) ---------------- */
 var CONFIG = {
   files:      { style: 'style.css', script: 'app.js', data: 'data.json' },
-  verifyFile: 'data.json',          // known file fetched to verify the token
+  verifyFile: 'data.json',
   defaultRepo:   'portfolio-data',
   defaultBranch: 'main',
-  basePath:  '',                    // prefix inside the repo, e.g. 'app/' — leave '' for root
-  inactivityMs: 15 * 60 * 1000      // auto-logout after inactivity (default 15 min)
+  basePath:  '',
+  inactivityMs: 15 * 60 * 1000
 };
 
-var LS_KEYS = { salt: 'pinSaltV1', hash: 'pinHashV1', demoData: 'portfolio-demo-data' };
+var LS_KEYS = { salt: 'pinSaltV1', hash: 'pinHashV1', owner: 'ghOwnerV1', repo: 'ghRepoV1', demoData: 'portfolio-demo-data' };
 
-/* ---------------- state: IN-MEMORY ONLY (never persisted) ---------------- */
-var session = null;            // { owner, repo, token, branch, basePath, style, script, data, dataSha, demo }
+// Hidden preview trigger: open the app with ?demo=1 to load bundled files
+// (no GitHub) — no visible button on the sign-in pages.
+var DEMO_AUTO = (function(){ try { return new URLSearchParams(location.search).get('demo') === '1'; } catch(e){ return false; } })();
+
+var session = null;            // in-memory ONLY: { owner, repo, token, branch, basePath, ... }
 var inactivityTimer = null;
 
-/* ---------------- tiny helpers ---------------- */
 function $(id){ return document.getElementById(id); }
 function show(id){ $(id).classList.remove('hidden'); }
 function hide(id){ $(id).classList.add('hidden'); }
 
 function apiBase(){
-  // Real mode: api.github.com only. Tests may override via window.__API_BASE__ before load.
   return (typeof window.__API_BASE__ === 'string' && window.__API_BASE__) ? window.__API_BASE__ : 'https://api.github.com';
 }
-function escapeHtml(s){
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
+function safeGet(key){ try { return localStorage.getItem(key); } catch(e){ return null; } }
+function safeSet(key, val){ try { localStorage.setItem(key, val); } catch(e){} }
+
 function joinPath(base, name){
   var b = (base || '').replace(/^\/+|\/+$/g,'');
   var n = name.replace(/^\/+/,'');
@@ -209,7 +242,6 @@ function decodeBase64(b64){
   return new TextDecoder().decode(bytes);
 }
 
-/* ---------------- crypto (subtle) ---------------- */
 function requireCrypto(){
   if (!(window.crypto && crypto.subtle)) {
     alert('This app requires a secure context (https:// or localhost) for SHA-256 PIN hashing.');
@@ -233,18 +265,12 @@ function sha256Hex(text){
   });
 }
 
-/* ---------------- PIN gate (device-local convenience lock) ---------------- */
+/* ---------------- PIN gate ---------------- */
 var pinStage = '';           // 'setup' | 'confirm' | 'verify'
 var pinFirstEntry = '';
 
-function hasPin(){
-  return !!(localStorage.getItem(LS_KEYS.salt) && localStorage.getItem(LS_KEYS.hash));
-}
-function showPinError(msg){
-  var el = $('pin-error');
-  el.textContent = msg;
-  el.style.display = msg ? 'block' : 'none';
-}
+function hasPin(){ return !!(safeGet(LS_KEYS.salt) && safeGet(LS_KEYS.hash)); }
+function showPinError(msg){ var el = $('pin-error'); el.textContent = msg; el.style.display = msg ? 'block' : 'none'; }
 function renderPinDots(v){
   var dots = $('pin-dots').querySelectorAll('span');
   for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('on', i < v.length);
@@ -257,11 +283,9 @@ function enterPinScreen(){
   pinStage = hasPin() ? 'verify' : 'setup';
   pinFirstEntry = '';
   $('pin-reset-btn').classList.toggle('hidden', !hasPin());
-  if (pinStage === 'verify') {
-    $('pin-sub').textContent = 'Enter your PIN to continue.';
-  } else {
-    $('pin-sub').textContent = 'Set a 4-digit device PIN to gate casual access on this device.';
-  }
+  $('pin-sub').textContent = pinStage === 'verify'
+    ? 'Enter your PIN to continue.'
+    : 'Set a 4-digit PIN to gate casual access on this device.';
   showPinError('');
   hide('view-auth'); hide('view-loading'); show('view-pin');
   setTimeout(function(){ pinInput.focus(); }, 50);
@@ -270,9 +294,7 @@ function onPinInput(){
   var v = $('pin-input').value.replace(/\D/g,'');
   $('pin-input').value = v.slice(0,4);
   renderPinDots($('pin-input').value);
-  if ($('pin-input').value.length === 4) {
-    setTimeout(onPinSubmit, 60);
-  }
+  if ($('pin-input').value.length === 4) setTimeout(onPinSubmit, 60);
 }
 function onPinSubmit(){
   if (!requireCrypto()) return;
@@ -297,29 +319,28 @@ function onPinSubmit(){
     }
     var salt = randomHex(16);
     sha256Hex(salt + ':' + pin).then(function(hash){
-      localStorage.setItem(LS_KEYS.salt, salt);
-      localStorage.setItem(LS_KEYS.hash, hash);
-      // never store plaintext pin
+      safeSet(LS_KEYS.salt, salt);
+      safeSet(LS_KEYS.hash, hash);
       $('pin-input').value = '';
-      enterAuthScreen();
+      afterPin();
     });
     return;
   }
   // verify
-  var storedSalt = localStorage.getItem(LS_KEYS.salt);
-  var storedHash = localStorage.getItem(LS_KEYS.hash);
+  var storedSalt = safeGet(LS_KEYS.salt);
+  var storedHash = safeGet(LS_KEYS.hash);
   sha256Hex(storedSalt + ':' + pin).then(function(h){
-    if (h === storedHash) {
-      $('pin-input').value = '';
-      enterAuthScreen();
-    } else {
-      $('pin-input').value = ''; renderPinDots('');
-      showPinError('Incorrect PIN. Try again.');
-    }
+    if (h === storedHash) { $('pin-input').value = ''; afterPin(); }
+    else { $('pin-input').value = ''; renderPinDots(''); showPinError('Incorrect PIN. Try again.'); }
   });
+}
+function afterPin(){
+  if (DEMO_AUTO) onDemo(); else enterAuthScreen();
 }
 function onPinReset(){
   if (!confirm('Reset the PIN on this device? (Your GitHub data is untouched — you will just need to set a new PIN.)')) return;
+  safeSet(LS_KEYS.salt, '');
+  safeSet(LS_KEYS.hash, '');
   localStorage.removeItem(LS_KEYS.salt);
   localStorage.removeItem(LS_KEYS.hash);
   enterPinScreen();
@@ -327,11 +348,12 @@ function onPinReset(){
 
 /* ---------------- GitHub auth (in-memory only) ---------------- */
 function enterAuthScreen(){
-  $('f_owner').value = ''; $('f_repo').value = CONFIG.defaultRepo || '';
-  $('f_token').value = ''; $('f_branch').value = CONFIG.defaultBranch; $('f_path').value = CONFIG.basePath || '';
+  $('f_owner').value = safeGet(LS_KEYS.owner) || '';
+  $('f_repo').value = safeGet(LS_KEYS.repo) || (CONFIG.defaultRepo || '');
+  $('f_token').value = '';
   showAuthError('');
   hide('view-pin'); hide('view-loading'); show('view-auth');
-  setTimeout(function(){ $('f_owner').focus(); }, 50);
+  setTimeout(function(){ ($('f_owner').value ? $('f_token') : $('f_owner')).focus(); }, 50);
 }
 function showAuthError(msg){
   var el = $('auth-error');
@@ -342,23 +364,12 @@ function showLoading(msg){
   $('loading-msg').textContent = msg || 'Working…';
   hide('view-pin'); hide('view-auth'); show('view-loading');
 }
-function errorText(e){
-  if (e && e.message) return e.message;
-  return 'Something went wrong. Check the network and try again.';
-}
 function githubFetch(path, opts){
   opts = opts || {};
-  var headers = {
-    'Accept': 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28'
-  };
+  var headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   if (session && session.token) headers['Authorization'] = 'token ' + session.token;
   if (opts.headers) { for (var k in opts.headers) headers[k] = opts.headers[k]; }
-  return fetch(apiBase() + path, {
-    method: opts.method || 'GET',
-    headers: headers,
-    body: opts.body || undefined
-  });
+  return fetch(apiBase() + path, { method: opts.method || 'GET', headers: headers, body: opts.body || undefined });
 }
 function safeHttpError(res){
   var fallback = 'HTTP ' + res.status + ' — ' + res.statusText;
@@ -384,19 +395,15 @@ function onUnlock(e){
   var owner = $('f_owner').value.trim();
   var repo  = $('f_repo').value.trim();
   var token = $('f_token').value;
-  var branch = $('f_branch').value.trim() || CONFIG.defaultBranch;
-  var basePath = $('f_path').value.trim() || '';
-
   if (!owner || !repo || !token) { showAuthError('Username, repo and token are all required.'); return; }
 
-  // in-memory only — never written to any persistent store
-  session = { owner: owner, repo: repo, token: token, branch: branch, basePath: basePath,
+  session = { owner: owner, repo: repo, token: token, branch: CONFIG.defaultBranch, basePath: CONFIG.basePath,
               style: null, script: null, data: null, dataSha: null, demo: false };
 
   showLoading('Verifying token & fetching app files…');
   var boot = {};
   Promise.resolve()
-    .then(function(){ return fetchRepoFile(CONFIG.verifyFile); })   // verifies token + repo access
+    .then(function(){ return fetchRepoFile(CONFIG.verifyFile); })
     .then(function(){ return fetchRepoFile(CONFIG.files.style); })
     .then(function(r){ boot.style = r.content; return fetchRepoFile(CONFIG.files.script); })
     .then(function(r){ boot.script = r.content; return fetchRepoFile(CONFIG.files.data); })
@@ -405,12 +412,15 @@ function onUnlock(e){
       boot.data = JSON.parse(r.content);
       session.style = boot.style; session.script = boot.script;
       session.data = boot.data; session.dataSha = boot.dataSha;
-      $('f_token').value = '';             // drop the token text field once verified
+      // remember username + repo only (token stays in memory)
+      safeSet(LS_KEYS.owner, owner);
+      safeSet(LS_KEYS.repo, repo);
+      $('f_token').value = '';
       mountApp();
     })
     .catch(function(err){
-      session = null;                       // wipe everything on failure
-      showAuthError(err.message || errorText(err));
+      session = null;
+      showAuthError(err.message || 'Something went wrong. Check the network and try again.');
       hide('view-loading'); show('view-auth');
     });
 }
@@ -429,15 +439,10 @@ function saveData(newData){
       sha: sha,
       branch: session.branch || 'main'
     };
-    return githubFetch(url, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+    return githubFetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
   return put(session.dataSha).then(function(res){
     if (res.status === 409) {
-      // another device edited data.json — refetch latest sha, retry once, warn caller
       return fetchRepoFile(CONFIG.files.data).then(function(latest){
         session.dataSha = latest.sha;
         return put(latest.sha).then(function(res2){
@@ -451,7 +456,7 @@ function saveData(newData){
   });
 }
 
-/* ---------------- demo mode (local bundled files, no GitHub) ---------------- */
+/* ---------------- demo mode ---------------- */
 function fetchDemoFile(name){
   var bases = ['../private/', './private/', 'private/', '../'];
   var i = 0;
@@ -467,7 +472,7 @@ function fetchDemoFile(name){
 }
 function saveDemoData(newData){
   session.data = newData;
-  try { localStorage.setItem(LS_KEYS.demoData, JSON.stringify(newData)); } catch (e) { /* storage full/blocked */ }
+  safeSet(LS_KEYS.demoData, JSON.stringify(newData));
   return Promise.resolve({ ok: true, sha: null, merged: false, demo: true });
 }
 function onDemo(){
@@ -475,8 +480,7 @@ function onDemo(){
                             style:null, script:null, data:null, dataSha:null, demo:true };
   showLoading('Loading bundled demo files (local only)…');
   var boot = {};
-  var cached = null;
-  try { cached = localStorage.getItem(LS_KEYS.demoData); } catch (e) {}
+  var cached = safeGet(LS_KEYS.demoData);
   Promise.resolve()
     .then(function(){ return fetchDemoFile(CONFIG.files.style); })
     .then(function(r){ boot.style = r; return fetchDemoFile(CONFIG.files.script); })
@@ -500,15 +504,9 @@ function mountApp(){
   styleEl.textContent = session.style;
 
   window.APP_BOOTSTRAP = {
-    demo:      session.demo,
-    owner:     session.owner,
-    repo:      session.repo,
-    branch:    session.branch,
-    basePath:  session.basePath,
-    data:      session.data,
-    dataSha:   session.dataSha,
-    saveData:  saveData,
-    logout:    logout
+    demo: session.demo, owner: session.owner, repo: session.repo,
+    branch: session.branch, basePath: session.basePath,
+    data: session.data, dataSha: session.dataSha, saveData: saveData, logout: logout
   };
 
   var scriptEl = $('injected-script');
@@ -524,7 +522,7 @@ function mountApp(){
   startInactivityTimer();
 }
 function teardown(){
-  session = null;                       // null the in-memory session object
+  session = null;
   stopInactivityTimer();
   var s = $('injected-script'); if (s) s.remove();
   var st = $('injected-style'); if (st) st.remove();
@@ -534,9 +532,7 @@ function teardown(){
   if (window.APP_BOOTSTRAP) { try { delete window.APP_BOOTSTRAP; } catch(e){ window.APP_BOOTSTRAP = null; } }
   enterPinScreen();
 }
-function logout(){
-  teardown();
-}
+function logout(){ teardown(); }
 
 /* ---------------- inactivity timeout ---------------- */
 function startInactivityTimer(){
@@ -566,18 +562,14 @@ $('pin-input').addEventListener('input', onPinInput);
 $('pin-submit-btn').addEventListener('click', onPinSubmit);
 $('pin-reset-btn').addEventListener('click', onPinReset);
 $('auth-form').addEventListener('submit', onUnlock);
-$('auth-unlock-btn').addEventListener('click', onUnlock);
-$('demo-link').addEventListener('click', onDemo);
 $('pin-input').addEventListener('keydown', function(e){ if (e.key === 'Enter') onPinSubmit(); });
 
-/* ---------------- boot ---------------- */
 if (!window.crypto || !crypto.subtle) {
   document.body.innerHTML = '<div class="lock-card"><h1>Secure context required</h1>' +
-    '<p class="sub">This app uses SHA-256 PIN hashing (Web Crypto), which needs https:// or localhost. ' +
-    'Open the app over HTTPS or from localhost.</p></div>';
+    '<p class="sub">This app uses SHA-256 PIN hashing (Web Crypto), which needs https:// or localhost.</p></div>';
 } else {
   enterPinScreen();
 }
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2da44e1df60bcff',t:'MTc4NzE1NDE1NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
