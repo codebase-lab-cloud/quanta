@@ -456,10 +456,11 @@ function safeHttpError(res){
   return res.json().then(function(j){ return 'HTTP ' + res.status + ' — ' + (j && j.message ? j.message : fallback); })
                    .catch(function(){ return fallback; });
 }
-function fetchRepoFile(fileName){
+function fetchRepoFile(fileName, cacheBust){
   var p = joinPath(session.basePath, fileName);
   var url = '/repos/' + encodeURIComponent(session.owner) + '/' + encodeURIComponent(session.repo) +
-            '/contents/' + encodePath(p) + '?ref=' + encodeURIComponent(session.branch || 'main');
+            '/contents/' + encodePath(p) + '?ref=' + encodeURIComponent(session.branch || 'main') +
+            (cacheBust ? '&_=' + Date.now() : '');
   return githubFetch(url).then(function(res){
     if (!res.ok) { return safeHttpError(res).then(function(m){ throw new Error(m); }); }
     return res.json().then(function(j){
@@ -512,28 +513,34 @@ function saveData(newData){
   var p = joinPath(session.basePath, CONFIG.files.data);
   var url = '/repos/' + encodeURIComponent(session.owner) + '/' + encodeURIComponent(session.repo) +
             '/contents/' + encodePath(p);
-  function put(sha){
-    var body = {
-      message: 'Update portfolio data',
-      content: encodeBase64(JSON.stringify(newData, null, 2)),
-      sha: sha,
-      branch: session.branch || 'main'
-    };
-    return githubFetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  }
-  return put(session.dataSha).then(function(res){
-    if (res.status === 409) {
-      return fetchRepoFile(CONFIG.files.data).then(function(latest){
-        session.dataSha = latest.sha;
-        return put(latest.sha).then(function(res2){
-          if (!res2.ok) { return safeHttpError(res2).then(function(m){ throw new Error(m); }); }
-          return res2.json().then(function(j){ session.dataSha = j.content.sha; return { ok:true, sha:j.content.sha, merged:true, remote: JSON.parse(latest.content) }; });
+  var body = {
+    message: 'Update portfolio data',
+    content: encodeBase64(JSON.stringify(newData, null, 2)),
+    sha: session.dataSha,
+    branch: session.branch || 'main'
+  };
+  return githubFetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    .then(function(res){
+      if (res.status === 409) {
+        // data.json changed on GitHub since this session loaded it (e.g. the
+        // monthly/weekly workflow ran, or another device edited it). Rather than
+        // overwrite that fresh data with this session's older copy, load the
+        // latest version and let the caller ask the user to redo their change.
+        return fetchRepoFile(CONFIG.files.data, true).then(function(latest){
+          var remote = JSON.parse(latest.content);
+          session.data = remote;
+          session.dataSha = latest.sha;
+          if (window.APP_BOOTSTRAP) { try { window.APP_BOOTSTRAP.data = remote; } catch(e){} }
+          return { ok:false, conflict:true, remote: remote };
         });
+      }
+      if (!res.ok) { return safeHttpError(res).then(function(m){ throw new Error(m); }); }
+      return res.json().then(function(j){
+        session.dataSha = j.content.sha;
+        session.data = newData;
+        return { ok:true, sha:j.content.sha, merged:false };
       });
-    }
-    if (!res.ok) { return safeHttpError(res).then(function(m){ throw new Error(m); }); }
-    return res.json().then(function(j){ session.dataSha = j.content.sha; return { ok:true, sha:j.content.sha, merged:false }; });
-  });
+    });
 }
 
 /* ---------------- demo mode ---------------- */
@@ -651,5 +658,5 @@ if (!window.crypto || !crypto.subtle) {
   enterPinScreen();
 }
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2f07080ef394061',t:'MTc4NzM4NjYyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
