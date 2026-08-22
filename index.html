@@ -2,9 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Quanta — Lock</title>
+<meta name="description" content="Quanta — private portfolio tracking & monitoring, synced via GitHub." />
+<title>Quanta</title>
+<!-- PWA / Add-to-Home-Screen -->
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#eef1f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0a0d16" media="(prefers-color-scheme: dark)" />
+<meta name="mobile-web-app-capable" content="yes" />
+<!-- iOS standalone mode -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Quanta" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
 <!--
   PUBLIC REPO — LOCK SCREEN ONLY.
   This file contains zero application logic, zero secrets, zero personal data.
@@ -34,7 +46,9 @@
     font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg); color:var(--text); min-height:100vh; display:flex;
     align-items:center; justify-content:center;
-    padding:24px; -webkit-font-smoothing:antialiased;
+    padding:calc(24px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
   }
   #bg-blobs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
   .blob{position:absolute;border-radius:50%;filter:blur(72px);opacity:.5}
@@ -60,7 +74,7 @@
   label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--muted)}
   label .ic{color:var(--faint)}
   input[type=password],input[type=text]{
-    width:100%;padding:11px 12px;font-size:15px;border:1px solid var(--glass-border);border-radius:10px;background:var(--card);color:var(--text);
+    width:100%;padding:11px 12px;font-size:16px;border:1px solid var(--glass-border);border-radius:10px;background:var(--card);color:var(--text);
   }
   input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(78,129,238,.14)}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -95,6 +109,13 @@
   body.app-mode{display:block;padding:0}
   body.app-mode .lock-card{display:none}
   .loading-row{display:flex;align-items:center;gap:12px;margin-top:2px}
+
+  /* ---------- small screens ---------- */
+  @media (max-width:420px){
+    .lock-card{padding:26px 20px 22px;border-radius:18px}
+    .row2{grid-template-columns:1fr}
+    h1{font-size:18px}
+  }
 
   /* ---------- dark mode ---------- */
   [data-theme="dark"]{
@@ -243,10 +264,28 @@ var LS_KEYS = { salt: 'pinSaltV1', hash: 'pinHashV1', owner: 'ghOwnerV1', repo: 
 var DEMO_AUTO = (function(){ try { return new URLSearchParams(location.search).get('demo') === '1'; } catch(e){ return false; } })();
 
 /* theme — shared with the injected app via localStorage (quantaThemeV1) */
+function setThemeColor(t){
+  var dark = t === 'dark';
+  var metas = document.querySelectorAll('meta[name="theme-color"]');
+  metas.forEach(function (m) {
+    m.setAttribute('content', dark ? '#0a0d16' : '#eef1f8');
+  });
+}
 (function initTheme(){
   var t = 'light';
   try { t = localStorage.getItem('quantaThemeV1') || 'light'; } catch(e){}
   document.documentElement.dataset.theme = (t === 'dark') ? 'dark' : 'light';
+  setThemeColor(document.documentElement.dataset.theme);
+})();
+
+/* service worker — only over https/localhost, and never in dev/test mode */
+(function initSW(){
+  if (typeof window.__API_BASE__ === 'string' && window.__API_BASE__) return;
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){ /* best-effort */ });
+  });
 })();
 
 var session = null;            // in-memory ONLY: { owner, repo, token, branch, basePath, ... }
@@ -612,5 +651,5 @@ if (!window.crypto || !crypto.subtle) {
   enterPinScreen();
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2eaa52aab5e1eef',t:'MTc4NzMyNTg3MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
