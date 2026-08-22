@@ -543,6 +543,73 @@ function saveData(newData){
     });
 }
 
+/* ---------------- on-demand workflow refresh (Fetch latest data) ---------------- */
+/* Triggers the "refresh-returns.yml" workflow via the Actions API, polls until
+   it completes, then returns the freshly-written data.json. Only ever talks to
+   api.github.com. Requires a token with Actions: read and write permission. */
+function runWorkflowRefresh(onStatus){
+  return new Promise(function(resolve, reject){
+    if (session.demo) { reject(new Error('Not available in demo mode.')); return; }
+    var wf = '/repos/' + encodeURIComponent(session.owner) + '/' + encodeURIComponent(session.repo) +
+             '/actions/workflows/refresh-returns.yml';
+    var pollUntil = Date.now() + 180000;   // give it up to 3 minutes
+    var dispatchedAt = 0;
+
+    function status(s){ if (typeof onStatus === 'function') onStatus(s); }
+    function getRuns(){
+      return githubFetch(wf + '/runs?per_page=8').then(function(res){
+        if (!res.ok) { return safeHttpError(res).then(function(m){ throw new Error(m); }); }
+        return res.json().then(function(j){ return j.workflow_runs || []; });
+      });
+    }
+
+    status('Triggering…');
+    githubFetch(wf + '/dispatches', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ref: session.branch || 'main' })
+    }).then(function(res){
+      if (res.status === 204) { dispatchedAt = Date.now(); return; }
+      return safeHttpError(res).then(function(m){
+        var msg = m;
+        if (res.status === 403) msg = 'GitHub rejected the request — your token needs the "Actions: read and write" permission.';
+        if (res.status === 404) msg = 'Workflow not found — ensure .github/workflows/refresh-returns.yml is in the repo.';
+        throw new Error(msg);
+      });
+    }).then(function(){
+      status('Running…');
+      function poll(){
+        if (Date.now() > pollUntil) { reject(new Error('Timed out waiting for the workflow — refresh the page shortly; it may still be running.')); return; }
+        getRuns().then(function(runs){
+          var run = null;
+          for (var i = 0; i < runs.length; i++){
+            var created = new Date(runs[i].created_at || 0).getTime();
+            if (created >= dispatchedAt - 6000) { run = runs[i]; break; }
+          }
+          if (!run) { setTimeout(poll, 4000); return; }
+          if (run.status === 'completed') {
+            if (run.conclusion === 'success') {
+              status('Loading data…');
+              fetchRepoFile(CONFIG.files.data, true).then(function(latest){
+                var data = JSON.parse(latest.content);
+                session.data = data; session.dataSha = latest.sha;
+                if (window.APP_BOOTSTRAP) { window.APP_BOOTSTRAP.data = data; window.APP_BOOTSTRAP.dataSha = latest.sha; }
+                resolve({ conclusion: 'success', data: data });
+              }).catch(reject);
+            } else {
+              reject(new Error('Workflow finished with "' + run.conclusion + '" — check the Actions tab for details.'));
+            }
+            return;
+          }
+          status(run.status === 'in_progress' ? 'Running…' : 'Queued…');
+          setTimeout(poll, 5000);
+        }).catch(reject);
+      }
+      setTimeout(poll, 2500);
+    }).catch(reject);
+  });
+}
+
 /* ---------------- demo mode ---------------- */
 function fetchDemoFile(name){
   var bases = ['../private/', './private/', 'private/', '../'];
@@ -593,7 +660,8 @@ function mountApp(){
   window.APP_BOOTSTRAP = {
     demo: session.demo, owner: session.owner, repo: session.repo,
     branch: session.branch, basePath: session.basePath,
-    data: session.data, dataSha: session.dataSha, saveData: saveData, logout: logout
+    data: session.data, dataSha: session.dataSha, saveData: saveData, logout: logout,
+    runWorkflowRefresh: runWorkflowRefresh
   };
 
   var scriptEl = $('injected-script');
@@ -658,5 +726,5 @@ if (!window.crypto || !crypto.subtle) {
   enterPinScreen();
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2f07080ef394061',t:'MTc4NzM4NjYyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2f0b5b7ffb64b8c',t:'MTc4NzM4OTQ2NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
