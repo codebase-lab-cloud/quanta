@@ -6,7 +6,7 @@
  * ever reach GitHub directly, over HTTPS.
  * ========================================================================= */
 'use strict';
-var CACHE = 'quanta-shell-v15';
+var CACHE = 'quanta-shell-v16';
 var ASSETS = [
   './',
   './index.html',
