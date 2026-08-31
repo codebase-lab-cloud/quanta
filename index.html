@@ -7,7 +7,7 @@
 <meta name="description" content="Quanta — private portfolio tracking & monitoring, synced via GitHub." />
 <title>Quanta</title>
 <!-- PWA / Add-to-Home-Screen -->
-<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="manifest" href="./manifest.json" />
 <meta name="theme-color" content="#eef1f8" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#0a0d16" media="(prefers-color-scheme: dark)" />
 <meta name="mobile-web-app-capable" content="yes" />
@@ -15,8 +15,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Quanta" />
-<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
 <!--
   PUBLIC REPO — LOCK SCREEN ONLY.
   This file contains zero application logic, zero secrets, zero personal data.
@@ -726,5 +727,5 @@ if (!window.crypto || !crypto.subtle) {
   enterPinScreen();
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2f0b5b7ffb64b8c',t:'MTc4NzM4OTQ2NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
