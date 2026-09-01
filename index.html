@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <!-- iOS standalone mode -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Quanta" />
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png?v=18" />
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=18" />
@@ -29,7 +29,6 @@
   passes both auth steps. Safe to view source.
 
   Stored on device (localStorage):
-    pinSaltV1 / pinHashV1  — salted SHA-256 of the 4-digit PIN (never plaintext)
     ghOwnerV1 / ghRepoV1   — username + repo name ONLY (convenience pre-fill)
   NEVER stored anywhere: the Personal Access Token (in-memory for the session).
 -->
@@ -102,10 +101,6 @@
   details.scope summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted)}
   details.scope p{font-size:12px;color:var(--muted);line-height:1.55;margin:8px 0 0}
 
-  .pin-dots{display:flex;gap:12px;justify-content:center;margin:4px 0 16px}
-  .pin-dots span{width:12px;height:12px;border-radius:50%;border:1.5px solid #c3c8d1;background:#fff;transition:all .1s}
-  .pin-dots span.on{background:var(--accent);border-color:var(--accent)}
-
   .spinner{width:18px;height:18px;border:2.5px solid #dbe6fb;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
   @keyframes spin{to{transform:rotate(360deg)}}
   .hidden{display:none !important}
@@ -133,7 +128,6 @@
     --chip-bg:rgba(255,255,255,.06);
   }
   [data-theme="dark"] .blob{ opacity:.26; }
-  [data-theme="dark"] .pin-dots span{ border-color:rgba(148,163,184,.4); }
   [data-theme="dark"] .spinner{ border-color:rgba(95,141,255,.22); border-top-color:var(--accent); }
   [data-theme="dark"] .btn-ghost:hover{ background:var(--chip-bg); }
   [data-theme="dark"] input[type=password],[data-theme="dark"] input[type=text]{ background:rgba(255,255,255,.04); }
@@ -145,35 +139,11 @@
     <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
   </div>
 
-  <!-- ============ LOCK / PIN + AUTH (public repo) ============ -->
+  <!-- ============ LOCK / AUTH (public repo) ============ -->
   <div class="lock-card" id="lock-card">
 
-    <!-- PIN SCREEN -->
-    <div id="view-pin">
-      <div class="brand">
-        <span class="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>
-          </svg>
-        </span>
-        <div>
-          <h1>Quanta</h1>
-          <p class="sub" id="pin-sub">Set a 4-digit PIN to gate casual access on this device.</p>
-        </div>
-      </div>
-      <div class="pin-dots" id="pin-dots"><span></span><span></span><span></span><span></span></div>
-      <div class="field">
-        <input type="password" id="pin-input" inputmode="numeric" maxlength="4" autocomplete="off"
-               placeholder="••••" aria-label="PIN" style="text-align:center;letter-spacing:14px;font-size:20px" />
-      </div>
-      <p class="error" id="pin-error"></p>
-      <button class="btn btn-primary" id="pin-submit-btn">Continue</button>
-      <button class="btn btn-ghost hidden" id="pin-reset-btn" style="width:100%;margin-top:10px">Forgot PIN? Reset on this device</button>
-      <p class="note">This PIN only gates casual access on <b>this device</b>. It is stored as a salted SHA-256 hash and is <b>not</b> tied to your GitHub token. It does not protect your data from someone with real access to this device.</p>
-    </div>
-
     <!-- GITHUB AUTH SCREEN -->
-    <div id="view-auth" class="hidden">
+    <div id="view-auth">
       <div class="brand">
         <span class="logo">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -261,7 +231,7 @@ var CONFIG = {
   inactivityMs: 15 * 60 * 1000
 };
 
-var LS_KEYS = { salt: 'pinSaltV1', hash: 'pinHashV1', owner: 'ghOwnerV1', repo: 'ghRepoV1', demoData: 'portfolio-demo-data' };
+var LS_KEYS = { owner: 'ghOwnerV1', repo: 'ghRepoV1', demoData: 'portfolio-demo-data' };
 
 // Hidden preview trigger: open the app with ?demo=1 to load bundled files
 // (no GitHub) — no visible button on the sign-in pages.
@@ -326,117 +296,13 @@ function decodeBase64(b64){
   return new TextDecoder().decode(bytes);
 }
 
-function requireCrypto(){
-  if (!(window.crypto && crypto.subtle)) {
-    alert('This app requires a secure context (https:// or localhost) for SHA-256 PIN hashing.');
-    return false;
-  }
-  return true;
-}
-function randomHex(nBytes){
-  var a = new Uint8Array(nBytes || 16);
-  crypto.getRandomValues(a);
-  var s = '';
-  for (var i = 0; i < a.length; i++) s += a[i].toString(16).padStart(2, '0');
-  return s;
-}
-function sha256Hex(text){
-  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function(buf){
-    var bytes = new Uint8Array(buf);
-    var s = '';
-    for (var i = 0; i < bytes.length; i++) s += bytes[i].toString(16).padStart(2, '0');
-    return s;
-  });
-}
-
-/* ---------------- PIN gate ---------------- */
-var pinStage = '';           // 'setup' | 'confirm' | 'verify'
-var pinFirstEntry = '';
-
-function hasPin(){ return !!(safeGet(LS_KEYS.salt) && safeGet(LS_KEYS.hash)); }
-function showPinError(msg){ var el = $('pin-error'); el.textContent = msg; el.style.display = msg ? 'block' : 'none'; }
-function renderPinDots(v){
-  var dots = $('pin-dots').querySelectorAll('span');
-  for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('on', i < v.length);
-}
-function enterPinScreen(){
-  requireCrypto();
-  var pinInput = $('pin-input');
-  pinInput.value = '';
-  renderPinDots('');
-  pinStage = hasPin() ? 'verify' : 'setup';
-  pinFirstEntry = '';
-  $('pin-reset-btn').classList.toggle('hidden', !hasPin());
-  $('pin-sub').textContent = pinStage === 'verify'
-    ? 'Enter your PIN to continue.'
-    : 'Set a 4-digit PIN to gate casual access on this device.';
-  showPinError('');
-  hide('view-auth'); hide('view-loading'); show('view-pin');
-  setTimeout(function(){ pinInput.focus(); }, 50);
-}
-function onPinInput(){
-  var v = $('pin-input').value.replace(/\D/g,'');
-  $('pin-input').value = v.slice(0,4);
-  renderPinDots($('pin-input').value);
-  if ($('pin-input').value.length === 4) setTimeout(onPinSubmit, 60);
-}
-function onPinSubmit(){
-  if (!requireCrypto()) return;
-  var pin = $('pin-input').value;
-  if (pin.length !== 4) { showPinError('Enter a 4-digit PIN.'); return; }
-
-  if (pinStage === 'setup') {
-    pinFirstEntry = pin;
-    $('pin-input').value = ''; renderPinDots('');
-    pinStage = 'confirm';
-    $('pin-sub').textContent = 'Re-enter the same PIN to confirm.';
-    showPinError('');
-    return;
-  }
-  if (pinStage === 'confirm') {
-    if (pin !== pinFirstEntry) {
-      pinStage = 'setup'; pinFirstEntry = '';
-      $('pin-input').value = ''; renderPinDots('');
-      $('pin-sub').textContent = 'PINs did not match. Set a 4-digit PIN.';
-      showPinError('PINs did not match — try again.');
-      return;
-    }
-    var salt = randomHex(16);
-    sha256Hex(salt + ':' + pin).then(function(hash){
-      safeSet(LS_KEYS.salt, salt);
-      safeSet(LS_KEYS.hash, hash);
-      $('pin-input').value = '';
-      afterPin();
-    });
-    return;
-  }
-  // verify
-  var storedSalt = safeGet(LS_KEYS.salt);
-  var storedHash = safeGet(LS_KEYS.hash);
-  sha256Hex(storedSalt + ':' + pin).then(function(h){
-    if (h === storedHash) { $('pin-input').value = ''; afterPin(); }
-    else { $('pin-input').value = ''; renderPinDots(''); showPinError('Incorrect PIN. Try again.'); }
-  });
-}
-function afterPin(){
-  if (DEMO_AUTO) onDemo(); else enterAuthScreen();
-}
-function onPinReset(){
-  if (!confirm('Reset the PIN on this device? (Your GitHub data is untouched — you will just need to set a new PIN.)')) return;
-  safeSet(LS_KEYS.salt, '');
-  safeSet(LS_KEYS.hash, '');
-  localStorage.removeItem(LS_KEYS.salt);
-  localStorage.removeItem(LS_KEYS.hash);
-  enterPinScreen();
-}
-
 /* ---------------- GitHub auth (in-memory only) ---------------- */
 function enterAuthScreen(){
   $('f_owner').value = safeGet(LS_KEYS.owner) || '';
   $('f_repo').value = safeGet(LS_KEYS.repo) || (CONFIG.defaultRepo || '');
   $('f_token').value = '';
   showAuthError('');
-  hide('view-pin'); hide('view-loading'); show('view-auth');
+  hide('view-loading'); show('view-auth');
   setTimeout(function(){ ($('f_owner').value ? $('f_token') : $('f_owner')).focus(); }, 50);
 }
 function showAuthError(msg){
@@ -446,7 +312,7 @@ function showAuthError(msg){
 }
 function showLoading(msg){
   $('loading-msg').textContent = msg || 'Working…';
-  hide('view-pin'); hide('view-auth'); show('view-loading');
+  hide('view-auth'); show('view-loading');
 }
 function githubFetch(path, opts){
   opts = opts || {};
@@ -676,7 +542,7 @@ function mountApp(){
   document.body.appendChild(scriptEl);
 
   document.body.classList.add('app-mode');
-  hide('view-pin'); hide('view-auth'); hide('view-loading');
+  hide('view-auth'); hide('view-loading');
   show('app-root');
   startInactivityTimer();
 }
@@ -689,7 +555,7 @@ function teardown(){
   $('app-root').classList.add('hidden');
   document.body.classList.remove('app-mode');
   if (window.APP_BOOTSTRAP) { try { delete window.APP_BOOTSTRAP; } catch(e){ window.APP_BOOTSTRAP = null; } }
-  enterPinScreen();
+  enterAuthScreen();
 }
 function logout(){ teardown(); }
 
@@ -699,7 +565,7 @@ function startInactivityTimer(){
   inactivityTimer = setTimeout(function(){
     if (session) {
       teardown();
-      alert('Session ended after inactivity. Re-enter your PIN and GitHub credentials to continue.');
+      alert('Session ended after inactivity. Re-enter your GitHub credentials to continue.');
     }
   }, CONFIG.inactivityMs);
 }
@@ -717,18 +583,10 @@ window.addEventListener('beforeunload', function(){ session = null; });
 window.addEventListener('pagehide',    function(){ session = null; });
 
 /* ---------------- wire up ---------------- */
-$('pin-input').addEventListener('input', onPinInput);
-$('pin-submit-btn').addEventListener('click', onPinSubmit);
-$('pin-reset-btn').addEventListener('click', onPinReset);
 $('auth-form').addEventListener('submit', onUnlock);
-$('pin-input').addEventListener('keydown', function(e){ if (e.key === 'Enter') onPinSubmit(); });
 
-if (!window.crypto || !crypto.subtle) {
-  document.body.innerHTML = '<div class="lock-card"><h1>Secure context required</h1>' +
-    '<p class="sub">This app uses SHA-256 PIN hashing (Web Crypto), which needs https:// or localhost.</p></div>';
-} else {
-  enterPinScreen();
-}
+/* ---------------- boot ---------------- */
+if (DEMO_AUTO) { onDemo(); } else { enterAuthScreen(); }
 </script>
 </body>
 </html>
