@@ -6,12 +6,13 @@
  * ever reach GitHub directly, over HTTPS.
  * ========================================================================= */
 'use strict';
-var CACHE = 'quanta-shell-v20';
+var CACHE = 'quanta-shell-v21';
 var ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './favicon.ico',
+  './apple-touch-icon.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/maskable-512.png',
