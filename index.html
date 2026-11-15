@@ -83,12 +83,13 @@
   .logo-glow{position:absolute;inset:-3px;background:var(--accent-gradient);border-radius:16px;filter:blur(10px);opacity:.6;animation:pulse-glow 3s ease-in-out infinite alternate}
   @keyframes pulse-glow{from{opacity:.45;transform:scale(.95)}to{opacity:.75;transform:scale(1.05)}}
   .logo{
-    position:relative;width:100%;height:100%;border-radius:15px;
-    background:var(--accent-gradient);
-    box-shadow:inset 0 1px 2px rgba(255,255,255,.3), 0 8px 20px -4px rgba(79,70,229,.5);
+    position:relative;width:100%;height:100%;
+    background:transparent;
+    box-shadow:none;
     display:flex;align-items:center;justify-content:center;
   }
-  .logo svg{width:28px;height:28px;stroke:#fff}
+  .logo-glow{display:none}
+  .logo svg{width:48px;height:48px}
   h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.025em;line-height:1.2}
   .badge-ver{
     display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;
@@ -189,11 +190,7 @@
         <div class="logo-wrap">
           <div class="logo-glow"></div>
           <div class="logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8" stroke="#ffffff"/>
-              <path d="M7 14 L10 11 L12.5 13.5 L18 8 M14 8 H18 V12" stroke="#34d399"/>
-              <path d="M16 16 L20 20" stroke="#ffffff"/>
-            </svg>
+            <svg viewBox="0 0 512 512" width="46" height="46"><defs><linearGradient id="qRingM" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#818cf8"/><stop offset="50%" stop-color="#6366f1"/><stop offset="100%" stop-color="#4f46e5"/></linearGradient><linearGradient id="qArrM" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs><g transform="translate(256, 256) scale(1.15)"><path d="M 0 -150 A 150 150 0 1 0 106 106" fill="none" stroke="url(#qRingM)" stroke-width="54" stroke-linecap="round"/><path d="M -60 45 L -5 -10 L 40 35 L 125 -55" fill="none" stroke="url(#qArrM)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><path d="M 70 -55 H 125 V 0" fill="none" stroke="url(#qArrM)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><path d="M 90 90 L 150 150" fill="none" stroke="url(#qRingM)" stroke-width="54" stroke-linecap="round"/></g></svg>
           </div>
         </div>
         <div>
@@ -248,11 +245,7 @@
         <div class="logo-wrap">
           <div class="logo-glow"></div>
           <div class="logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8" stroke="#ffffff"/>
-              <path d="M7 14 L10 11 L12.5 13.5 L18 8 M14 8 H18 V12" stroke="#34d399"/>
-              <path d="M16 16 L20 20" stroke="#ffffff"/>
-            </svg>
+            <svg viewBox="0 0 512 512" width="46" height="46"><defs><linearGradient id="qRingM" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#818cf8"/><stop offset="50%" stop-color="#6366f1"/><stop offset="100%" stop-color="#4f46e5"/></linearGradient><linearGradient id="qArrM" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs><g transform="translate(256, 256) scale(1.15)"><path d="M 0 -150 A 150 150 0 1 0 106 106" fill="none" stroke="url(#qRingM)" stroke-width="54" stroke-linecap="round"/><path d="M -60 45 L -5 -10 L 40 35 L 125 -55" fill="none" stroke="url(#qArrM)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><path d="M 70 -55 H 125 V 0" fill="none" stroke="url(#qArrM)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/><path d="M 90 90 L 150 150" fill="none" stroke="url(#qRingM)" stroke-width="54" stroke-linecap="round"/></g></svg>
           </div>
         </div>
         <div>
