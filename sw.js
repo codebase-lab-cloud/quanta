@@ -6,18 +6,17 @@
  * ever reach GitHub directly, over HTTPS.
  * ========================================================================= */
 'use strict';
-var CACHE = 'quanta-shell-v22';
+var CACHE = 'quanta-shell-v25';
 var ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './favicon.ico',
-  './apple-touch-icon.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/maskable-512.png',
-  './icons/apple-touch-icon.png',
-  './icons/favicon-32.png'
+  './favicon.svg?v=25',
+  './apple-touch-icon.png?v=25',
+  './icon-192.png?v=25',
+  './icon-512.png?v=25',
+  './maskable-512.png?v=25',
+  './favicon-32.png?v=25'
 ];
 
 self.addEventListener('install', function (e) {

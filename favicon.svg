@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="qRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="50%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="qArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(256, 256) scale(1.15)">
+    <!-- Outer Q Ring -->
+    <path d="M 0 -150 A 150 150 0 1 0 106 106" fill="none" stroke="url(#qRingGrad)" stroke-width="54" stroke-linecap="round"/>
+    <!-- Ascending Growth Arrow Vector -->
+    <path d="M -60 45 L -5 -10 L 40 35 L 125 -55" fill="none" stroke="url(#qArrowGrad)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Arrowhead -->
+    <path d="M 70 -55 H 125 V 0" fill="none" stroke="url(#qArrowGrad)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Q Tail -->
+    <path d="M 90 90 L 150 150" fill="none" stroke="url(#qRingGrad)" stroke-width="54" stroke-linecap="round"/>
+  </g>
+</svg>
